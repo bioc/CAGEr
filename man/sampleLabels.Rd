@@ -80,16 +80,16 @@ Other CAGEr accessor methods:
 \code{\link{consensusClustersGR}()},
 \code{\link{expressionClasses}()},
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},
 \code{\link{seqNameTotalsSE}()},
 \code{\link{tagClustersGR}()}
 
 Other CAGEr setter methods: 
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{setColors}()}
 }
 \author{

@@ -43,8 +43,8 @@ Other CAGEr accessor methods:
 \code{\link{consensusClustersGR}()},
 \code{\link{expressionClasses}()},
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{sampleLabels}()},
 \code{\link{seqNameTotalsSE}()},
 \code{\link{tagClustersGR}()}

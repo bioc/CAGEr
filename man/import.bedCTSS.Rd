@@ -24,8 +24,8 @@ counting the number of CAGE transcription start sites (CTSS).
 Other loadFileIntoGPos: 
 \code{\link{bam2CTSS}()},
 \code{\link{import.CTSS}()},
-\code{\link{import.bam.ctss}()},
 \code{\link{import.bam}()},
+\code{\link{import.bam.ctss}()},
 \code{\link{import.bedScore}()},
 \code{\link{import.bedmolecule}()},
 \code{\link{loadFileIntoGPos}()},
