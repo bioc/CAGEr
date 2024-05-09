@@ -1,25 +1,5 @@
 #' @include CAGEexp.R CTSS.R
 NULL
-
-#' Analysis of CAGE (Cap Analysis of Gene Expression) sequencing data for
-#' precise mapping of transcription start sites and promoterome mining
-#' 
-#' The _CAGEr_ package performs identification of transcription start sites and
-#' frequency of their usage from input CAGE sequencing data, normalization of
-#' raw CAGE tag count, clustering of TSSs into tag clusters (TC) and their
-#' aggregation across multiple CAGE experiments to construct the promoterome.
-#' It manipulates multiple CAGE experiments at once, performs expression
-#' profiling across experiments both at level of individual TSSs and clusters of
-#' TSSs, exports several different types of track files for visualization in the
-#' UCSC Genome Browser, performs analysis of promoter width and detects
-#' differential usage of TSSs (promoter shifting) between samples.  Multicore
-#' option for parallel processing is supported on Unix-like platforms.
-#' 
-#' @author Vanja Haberle
-#' 
-#' @docType package
-#' @name CAGEr-package
-NULL
  
 #' CAGEr objects
 #' 
