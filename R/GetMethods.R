@@ -43,7 +43,7 @@ setMethod("genomeName", "CTSS", function (object) metadata(object)$genomeName)
 #' @title Extracting paths to input files from CAGEr objects
 #' 
 #' @description Extracts the paths to CAGE data input files from
-#' code{\link{CAGEexp}} objects.
+#' \code{\link{CAGEexp}} objects.
 #' 
 #' @param object A CAGEexp object.
 #' 
@@ -89,36 +89,30 @@ function (object){
 #' @details The following input file types are supported:
 #' 
 #' \itemize{
-#'   \item{\code{bam}:}
-#'   {A single-ended BAM file.}
+#'   \item{\code{bam}: A single-ended BAM file.}
 #' 
-#'   \item{\code{bamPairedEnd}:}
-#'   {A paired-ended BAM file.}
+#'   \item{\code{bamPairedEnd}: A paired-ended BAM file.}
 #' 
-#'   \item{\code{bed}:}
-#'   {A BED file where each line counts for one molecule.}
+#'   \item{\code{bed}: A BED file where each line counts for one molecule.}
 #' 
-#'   \item{\code{bedScore}:}
-#'   {A BED file where the score indicates a number of counts for a
-#'   given alignment}
+#'   \item{\code{bedScore}: A BED file where the score indicates a number of
+#'   counts for a given alignment.}
 #' 
-#'   \item{\code{CAGEscanMolecule}:}
-#'   {Experimental.  For the CAGEscan 3.0 pipeline.}
+#'   \item{\code{CAGEscanMolecule}: Experimental.  For the CAGEscan 3.0 pipeline.}
 #' 
-#'   \item{\code{ctss}:}
-#'   {A tabulation-delimited file describing CAGE Transcription
+#'   \item{\code{ctss}: A tabulation-delimited file describing CAGE Transcription
 #'   Start Sites (CTSS) with four columns indicating \emph{chromosome},
 #'   \emph{1-based coordinate}, \emph{strand} and \emph{score} respectively.}
 #' 
-#'   \item{\code{CTSStable}}{}
+#'   \item{\code{CTSStable}}
 #' 
-#'   \item{\code{FANTOM5}}{}
+#'   \item{\code{FANTOM5}}
 #' 
-#'   \item {\code{ENCODE}}{}
+#'   \item {\code{ENCODE}}
 #' 
-#'   \item{\code{FANTOM3and4}}{}
+#'   \item{\code{FANTOM3and4}}
 #' 
-#'   \item{\code{ZebrafishDevelopment}}{}
+#'   \item{\code{ZebrafishDevelopment}}
 #' }
 #' 
 #' @author Vanja Haberle
