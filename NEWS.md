@@ -1,4 +1,11 @@
-# Changes in version 2.8.0
+# Changes in version 2.11.1
+
+BUG FIXES
+
+-   Remove broken and obsolete `customClusters` method of `clusterCTSS`.  Use
+    `CustomConsensusClusters()` instead.
+
+# Changes in version 2.8.0 (25/10/2023)
 
 BUG FIXES
 
