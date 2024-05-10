@@ -432,6 +432,8 @@ setMethod( "plotExpressionProfiles", "CAGEexp"
 #' exampleCAGEexp |>
 #'   consensusClustersGR("Zf.high", qLow = .1, qUp = .9) |>
 #'   exportToTrack(qLow = .1, qUp = .9)
+#' exportToTrack( exampleCAGEexp, what = "consensusClusters"
+#'              , qLow = 0.1, qUp = 0.9, oneTrack = FALSE)
 #' 
 #' @export
 
@@ -451,7 +453,7 @@ setMethod( "exportToTrack", "CAGEexp"
 	        , CTSS              = if (oneTrack) { CTSScoordinatesGR(object)
 	                              } else { CTSStagCountGR(object, samples = "all") }
 	        , tagClusters       = tagClustersGR(      object, qLow = qLow, qUp = qUp)
-	        , consensusClusters = consensusClustersGR(object, qLow = qLow, qUp = qUp))
+	        , consensusClusters = consensusClustersGR(object, qLow = qLow, qUp = qUp, returnInterquantileWidth = ifelse(is.null(qLow), FALSE, TRUE))) # See issue 108
 	
 	exportToTrack( clusters, qLow = qLow, qUp = qUp
 	             , colorByExpressionProfile = colorByExpressionProfile
