@@ -3,7 +3,9 @@
 BUG FIXES
 
 -   Remove broken and obsolete `customClusters` method of `clusterCTSS`.  Use
-    `CustomConsensusClusters()` instead.
+    `CustomConsensusClusters()` instead.  Fixes #113.
+-   Ensure consensus clusters can be exported as tracks with interquantile
+    width information.  Fixes #108, #70.
 
 # Changes in version 2.8.0 (25/10/2023)
 
