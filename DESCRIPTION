@@ -55,7 +55,6 @@ Suggests:
     ggseqlogo,
     BiocStyle,
     knitr,
-    rmarkdown
     rmarkdown,
     ZebrafishDevelopmentalCAGE
 Description: The _CAGEr_ package identifies transcription start sites (TSS) and
