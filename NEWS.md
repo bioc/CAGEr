@@ -1,3 +1,16 @@
+# Upcoming changes in version 2.11.2
+
+BUG FIXES
+
+-   The `importPublicData` function was repaired.
+
+NEW FEATURES
+
+-   The `plotReverseCumulatives()` function now uses `ggplot2`.  Its  `main`,
+    `legend`, `xlab`, `ylab`, `xlim` and `ylim` arguments were removed as this
+    can be controlled via `ggplot2` functions.
+-   New `TSSlogo` function wrapping the `ggseqlogo` package.
+
 # Changes in version 2.11.1
 
 BUG FIXES
