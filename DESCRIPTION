@@ -44,13 +44,20 @@ Depends:
     MultiAssayExperiment,
     R (>= 4.1.0)
 Suggests:
+    BSgenome.Dmelanogaster.UCSC.dm3,
     BSgenome.Drerio.UCSC.danRer7,
+    BSgenome.Hsapiens.UCSC.hg18,
+    BSgenome.Hsapiens.UCSC.hg19,
+    BSgenome.Mmusculus.UCSC.mm9,
+    ENCODEprojectCAGE,
     DESeq2,
     FANTOM3and4CAGE,
     ggseqlogo,
     BiocStyle,
     knitr,
     rmarkdown
+    rmarkdown,
+    ZebrafishDevelopmentalCAGE
 Description: The _CAGEr_ package identifies transcription start sites (TSS) and
  their usage frequency from CAGE (Cap Analysis Gene Expression) sequencing data.
  It normalises raw CAGE tag count, clusters TSSs into tag clusters (TC) and
