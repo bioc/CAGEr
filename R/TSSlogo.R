@@ -36,26 +36,26 @@ setGeneric("TSSlogo",
 
 setMethod("TSSlogo", signature("CAGEexp"),
           function (x, upstream = 10, downstream = 10) {
-  TSSlogo(CTSScoordinatesGR(object), upstream = upstream, downstream = downstream)
+  TSSlogo(CTSScoordinatesGR(x), upstream = upstream, downstream = downstream)
 })
 
 #' @rdname TSSlogo
 
 setMethod("TSSlogo", signature("TagClusters"),
           function (x, upstream = 10, downstream = 10) {
-  TSSlogo(object$dominant_ctss |> as("CTSS"), upstream = upstream, downstream = downstream)
+  TSSlogo(x$dominant_ctss |> as("CTSS"), upstream = upstream, downstream = downstream)
 })
 
 setMethod("TSSlogo", signature("ConsensusClusters"),
           function (x, upstream = 10, downstream = 10) {
-  TSSlogo(object$dominant_ctss |> as("CTSS"), upstream = upstream, downstream = downstream)
+  TSSlogo(x$dominant_ctss |> as("CTSS"), upstream = upstream, downstream = downstream)
 })
 
 #' @rdname TSSlogo
 
 setMethod("TSSlogo", signature("CTSS"),
           function (x, upstream = 10, downstream = 10) {
-  .TSSlogo(object, upstream = upstream, downstream = downstream)
+  .TSSlogo(x, upstream = upstream, downstream = downstream)
 })
 
 .TSSlogo <- function(x, upstream=10, downstream=10) {
