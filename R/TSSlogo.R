@@ -46,6 +46,8 @@ setMethod("TSSlogo", signature("TagClusters"),
   TSSlogo(x$dominant_ctss |> as("CTSS"), upstream = upstream, downstream = downstream)
 })
 
+#' @rdname TSSlogo
+
 setMethod("TSSlogo", signature("ConsensusClusters"),
           function (x, upstream = 10, downstream = 10) {
   TSSlogo(x$dominant_ctss |> as("CTSS"), upstream = upstream, downstream = downstream)

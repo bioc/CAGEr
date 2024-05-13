@@ -4,6 +4,7 @@
 \alias{TSSlogo}
 \alias{TSSlogo,CAGEexp-method}
 \alias{TSSlogo,TagClusters-method}
+\alias{TSSlogo,ConsensusClusters-method}
 \alias{TSSlogo,CTSS-method}
 \title{TSS logo}
 \usage{
@@ -12,6 +13,8 @@ TSSlogo(x, upstream = 10, downstream = 10)
 \S4method{TSSlogo}{CAGEexp}(x, upstream = 10, downstream = 10)
 
 \S4method{TSSlogo}{TagClusters}(x, upstream = 10, downstream = 10)
+
+\S4method{TSSlogo}{ConsensusClusters}(x, upstream = 10, downstream = 10)
 
 \S4method{TSSlogo}{CTSS}(x, upstream = 10, downstream = 10)
 }
