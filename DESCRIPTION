@@ -15,8 +15,6 @@ Imports:
     BSgenome,
     CAGEfightR,
     data.table,
-    DelayedArray,
-    DelayedMatrixStats,
     formula.tools,
     GenomeInfoDb,
     GenomicAlignments,
@@ -81,8 +79,8 @@ Collate:
     'AggregationMethods.R'
     'CAGEfightR.R'
     'CAGEr-package.R'
+    'Paraclu.R'
     'CorrelationMethods.R'
-    'CumulativeDistributionFunctions.R'
     'GetMethods.R'
     'CumulativeDistributionMethods.R'
     'ExportMethods.R'

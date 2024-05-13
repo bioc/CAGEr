@@ -10,7 +10,7 @@ clusterCTSS(
   threshold = 1,
   nrPassThreshold = 1,
   thresholdIsTpm = TRUE,
-  method = c("distclu", "paraclu", "custom"),
+  method = c("distclu", "paraclu"),
   maxDist = 20,
   removeSingletons = FALSE,
   keepSingletonsAbove = Inf,
@@ -26,7 +26,7 @@ clusterCTSS(
   threshold = 1,
   nrPassThreshold = 1,
   thresholdIsTpm = TRUE,
-  method = c("distclu", "paraclu", "custom"),
+  method = c("distclu", "paraclu"),
   maxDist = 20,
   removeSingletons = FALSE,
   keepSingletonsAbove = Inf,
@@ -46,8 +46,7 @@ in \verb{< nrPassThreshold} experiments.}
 \item{thresholdIsTpm}{Logical indicating if \code{threshold} is expressed in
 raw tag counts (\code{FALSE}) or normalized signal (\code{TRUE}).}
 
-\item{method}{Method to be used for clustering: \code{"distclu"} or \code{"paraclu"}.
-See Details.}
+\item{method}{Clustering method: \code{"distclu"} or \code{"paraclu"}.}
 
 \item{maxDist}{Maximal distance between two neighbouring CTSSs for them to be
 part of the same cluster.  Used only when \code{method = "distclu"},
@@ -96,7 +95,7 @@ assigns them to predefined genomic regions.
 The \code{"distclu"} method is an implementation of simple distance-based
 clustering of data attached to sequences, where two neighbouring TSSs are
 joined together if they are closer than some specified distance (see
-\code{\link{distclu-functions}} for implementation details.
+\code{\link[GenomicRanges:inter-range-methods]{GenomicRanges::reduce}} for implementation details.
 
 \code{"paraclu"} is an implementation of Paraclu algorithm for parametric
 clustering of data attached to sequences (Frith \emph{et al.}, Genome Research,

@@ -16,8 +16,7 @@
 #' @param thresholdIsTpm Logical indicating if `threshold` is expressed in
 #'        raw tag counts (`FALSE`) or normalized signal (`TRUE`).
 #' 
-#' @param method Method to be used for clustering: `"distclu"` or `"paraclu"`.
-#'        See Details.
+#' @param method Clustering method: `"distclu"` or `"paraclu"`.
 #' 
 #' @param maxDist Maximal distance between two neighbouring CTSSs for them to be
 #'        part of the same cluster.  Used only when `method = "distclu"`,
@@ -54,7 +53,7 @@
 #' @details The `"distclu"` method is an implementation of simple distance-based
 #' clustering of data attached to sequences, where two neighbouring TSSs are
 #' joined together if they are closer than some specified distance (see
-#' [`distclu-functions`] for implementation details.
+#' [`GenomicRanges::reduce`] for implementation details.
 #' 
 #' `"paraclu"` is an implementation of Paraclu algorithm for parametric
 #' clustering of data attached to sequences (Frith _et al._, Genome Research,
@@ -106,7 +105,7 @@
 setGeneric( "clusterCTSS"
           , function( object
                     , threshold = 1, nrPassThreshold = 1, thresholdIsTpm = TRUE
-                    , method = c("distclu", "paraclu", "custom"), maxDist = 20
+                    , method = c("distclu", "paraclu"), maxDist = 20
                     , removeSingletons = FALSE, keepSingletonsAbove = Inf
                     , minStability = 1, maxLength = 500
                     , reduceToNonoverlapping = TRUE
@@ -137,12 +136,11 @@ setMethod( "clusterCTSS", "CAGEexp"
 	method <- match.arg(method)
 
   if (method == "distclu") {
-    ctss.cluster.list <- .distclu( se = data[decode(filteredCTSSidx(object)),]
+    ctss.cluster.list <-  distclu( object = data[decode(filteredCTSSidx(object)),]
                                  , max.dist = maxDist, removeSingletons = removeSingletons
-                                 , keepSingletonsAbove = keepSingletonsAbove
-                                 , useMulticore = useMulticore, nrCores = nrCores)
+                                 , keepSingletonsAbove = keepSingletonsAbove)
   } else if (method == "paraclu") {
-    ctss.cluster.list <- .paraclu( se = data[decode(filteredCTSSidx(object)),]
+    ctss.cluster.list <-  paraclu( object = data[decode(filteredCTSSidx(object)),]
                                  , minStability = minStability, maxLength = maxLength
                                  , removeSingletons = removeSingletons
                                  , keepSingletonsAbove = keepSingletonsAbove

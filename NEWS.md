@@ -10,6 +10,9 @@ NEW FEATURES
     `legend`, `xlab`, `ylab`, `xlim` and `ylim` arguments were removed as this
     can be controlled via `ggplot2` functions.
 -   New `TSSlogo` function wrapping the `ggseqlogo` package.
+-   New `distclu` and `paraclu` functions that can run directly on `CTSS`
+    objects.  You can use them to test parameters before running the whole
+    `CAGEexp` object through `clusterCTSS`.
 
 # Changes in version 2.11.1
 
@@ -21,6 +24,16 @@ BUG FIXES
     width information.  Fixes #108, #70.
 
 # Changes in version 2.8.0 (25/10/2023)
+
+BACKWARDS-INCOMPATIBLE CHANGES
+
+-   The `CTSStagCountDA` function is removed.
+-   The _dominant peak_ in `TagClusters` objects is now a `GRanges` object like
+    in `ConsensusClusters`.
+-   The `custom` method for tag clustering is removed.  It was obsoleted by
+    the newer `CustomConsensusClusters` function.
+-   The `exportToTrack` function now exports scores of _tag clusters_ and
+    _consensus clusters_ instead of setting them to zero.
 
 BUG FIXES
 
@@ -41,7 +54,7 @@ BUG FIXES
 NEW FEATURES
 
 -   Allow URLs to files in `getCTSS()` (Fixes #50).
--   Accelerated the computation of quantile position by ~20 times.
+-   Accelerated the computation of cumulative sums and quantile position ~10×.
 -   New `resetCAGEexp()` function.
 -   New `flagByUpstreamSequences()` function.
 -   The `annotateCTSS` and `annotateConsensusClusters` function gain a
