@@ -822,44 +822,45 @@ setGeneric("importPublicData",
 }
 
 .importPublicData_ENCODE <- function (dataset, group = NULL, sample = NULL) {
-  if (length(unique(dataset))>1) stop ("Merging datasets not supported yet.")
-  if (! requireNamespace("ENCODEprojectCAGE"))
-    stop ("This function requires the ", dQuote("ENCODEprojectCAGE"), " package.",
-          " package; please install it from http://promshift.genereg.net/CAGEr/PackageSource/.")
-  if (dataset == "ENCODEtissueCAGEfly") {
-    if (group != "embryo") stop("Only 'embryo' is allowed as group for dataset 'ENCODEtissueCAGEfly'.")
-    if (sample != "mixed_embryos_0-24hr") stop("Only 'mixed_embryos_0-24hr' is allowed as sample for dataset 'ENCODEtissueCAGEfly'.")
-    if (! requireNamespace("BSgenome.Dmelanogaster.UCSC.dm3"))
-      stop ("This function requires the ", dQuote("BSgenome.Dmelanogaster.UCSC.dm3"), " package.")
-    genome.name <- "BSgenome.Dmelanogaster.UCSC.dm3"
-    ENCODEtissueCAGEfly <- NULL
-    data("ENCODEtissueCAGEfly", package = "ENCODEprojectCAGE", envir = environment())
-    df <- ENCODEtissueCAGEfly$embryo
-  } else {
-    if (! requireNamespace("BSgenome.Hsapiens.UCSC.hg19"))
-      stop ("This function requires the ", dQuote("BSgenome.Hsapiens.UCSC.hg19"), " package.")
-    genome.name <- "BSgenome.Hsapiens.UCSC.hg19"
-    ENCODEhumanCellLinesSamples <- NULL
-    data("ENCODEhumanCellLinesSamples", package = "ENCODEprojectCAGE", envir = environment())
-    info.df <- ENCODEhumanCellLinesSamples
-    if(!(all(dataset %in% info.df$dataset)))
-      stop("Specified dataset(s) not found! Call data(ENCODEhumanCellLinesSamples) and check 'dataset' column for available ENCODE datasets!")
-    if(!(all(group %in% info.df[info.df$dataset == dataset,"group"])))
-      stop("Some of the provided groups cannot be found in the specified dataset!")
-    if(!(all(sample %in% info.df[,"sample"])))
-      stop("Some of the provided samples cannot be found!")
-    data(list= dataset, package = "ENCODEprojectCAGE", envir = environment())
-    df <- get(dataset)[[group]]
-  }
-  se <- .df2SE(df, sample, genome.name)
-  ce <- CAGEexp(genomeName = genome.name,
-                colData = DataFrame( sampleLabels = make.names(sample),
-                                     inputFiles = NA,
-                                     inputFilesType = 'ctss',
-                                     librarySizes = sapply(assay(se), sum),
-                                     row.names = make.names(sample)))
-  CTSStagCountSE(ce) <- se
-  ce
+  stop("ENCODE data support disabled until I find a way to suggest ENCODEprojectCAGE without causing CI crash in GitHub because of WARNING.")
+  # if (length(unique(dataset))>1) stop ("Merging datasets not supported yet.")
+  # if (! requireNamespace("ENCODEprojectCAGE"))
+  #   stop ("This function requires the ", dQuote("ENCODEprojectCAGE"), " package.",
+  #         " package; please install it from http://promshift.genereg.net/CAGEr/PackageSource/.")
+  # if (dataset == "ENCODEtissueCAGEfly") {
+  #   if (group != "embryo") stop("Only 'embryo' is allowed as group for dataset 'ENCODEtissueCAGEfly'.")
+  #   if (sample != "mixed_embryos_0-24hr") stop("Only 'mixed_embryos_0-24hr' is allowed as sample for dataset 'ENCODEtissueCAGEfly'.")
+  #   if (! requireNamespace("BSgenome.Dmelanogaster.UCSC.dm3"))
+  #     stop ("This function requires the ", dQuote("BSgenome.Dmelanogaster.UCSC.dm3"), " package.")
+  #   genome.name <- "BSgenome.Dmelanogaster.UCSC.dm3"
+  #   ENCODEtissueCAGEfly <- NULL
+  #   data("ENCODEtissueCAGEfly", package = "ENCODEprojectCAGE", envir = environment())
+  #   df <- ENCODEtissueCAGEfly$embryo
+  # } else {
+  #   if (! requireNamespace("BSgenome.Hsapiens.UCSC.hg19"))
+  #     stop ("This function requires the ", dQuote("BSgenome.Hsapiens.UCSC.hg19"), " package.")
+  #   genome.name <- "BSgenome.Hsapiens.UCSC.hg19"
+  #   ENCODEhumanCellLinesSamples <- NULL
+  #   data("ENCODEhumanCellLinesSamples", package = "ENCODEprojectCAGE", envir = environment())
+  #   info.df <- ENCODEhumanCellLinesSamples
+  #   if(!(all(dataset %in% info.df$dataset)))
+  #     stop("Specified dataset(s) not found! Call data(ENCODEhumanCellLinesSamples) and check 'dataset' column for available ENCODE datasets!")
+  #   if(!(all(group %in% info.df[info.df$dataset == dataset,"group"])))
+  #     stop("Some of the provided groups cannot be found in the specified dataset!")
+  #   if(!(all(sample %in% info.df[,"sample"])))
+  #     stop("Some of the provided samples cannot be found!")
+  #   data(list= dataset, package = "ENCODEprojectCAGE", envir = environment())
+  #   df <- get(dataset)[[group]]
+  # }
+  # se <- .df2SE(df, sample, genome.name)
+  # ce <- CAGEexp(genomeName = genome.name,
+  #               colData = DataFrame( sampleLabels = make.names(sample),
+  #                                    inputFiles = NA,
+  #                                    inputFilesType = 'ctss',
+  #                                    librarySizes = sapply(assay(se), sum),
+  #                                    row.names = make.names(sample)))
+  # CTSStagCountSE(ce) <- se
+  # ce
 } 
 
 .importPublicData_F34 <- function (dataset, group = NULL, sample = NULL) {
@@ -945,35 +946,36 @@ setGeneric("importPublicData",
 }
 
 .importPublicData_ZF <- function(group = "development", sample = NULL) {
-  if (group != "development")
-    stop("Invalid group name! There is only one group in this dataset named 'development'.")
-  if (! requireNamespace("ZebrafishDevelopmentalCAGE"))
-    stop ("This function requires the ", dQuote("ZebrafishDevelopmentalCAGE"),
-          " package; please install it from http://promshift.genereg.net/CAGEr/PackageSource/.")
-  if (! requireNamespace("BSgenome.Drerio.UCSC.danRer7"))
-    stop ("This function requires the ", dQuote("BSgenome.Drerio.UCSC.danRer7"), " package.")
-
-  ZebrafishSamples <- NULL
-  data("ZebrafishSamples", package = "ZebrafishDevelopmentalCAGE", envir = environment())
-  
-  validSampleNames <- levels(ZebrafishSamples$sample)
-  if (is.null(sample )) sample <- validSampleNames
-  if ( ! all(sample %in% validSampleNames))
-    stop("At least one sample name is not valid. ",
-         "Valid sample names are: ", paste(validSampleNames, collapse = ", "), ".")
-  
-  ZebrafishCAGE <- NULL
-  data("ZebrafishCAGE", package = "ZebrafishDevelopmentalCAGE", envir = environment())
-  # The vignette of ZebrafishDevelopmentalCAGE states that the provided coordinates are 1-based.
-  ctssSE <- .df2SE(ZebrafishCAGE$development, sample, "BSgenome.Drerio.UCSC.danRer7")
-  ce <- CAGEexp(genomeName = "BSgenome.Drerio.UCSC.danRer7",
-                colData = DataFrame( sampleLabels = sample,
-                                     inputFiles = NA,
-                                     inputFilesType = 'ctss',
-                                     librarySizes = sapply(assay(ctssSE), sum),
-                                     row.names = sample))
-  CTSStagCountSE(ce) <- ctssSE
-  ce
+  stop("Zebrafish data support disabled until I find a way to suggest ZebrafishDevelopmentalCAGE without causing CI crash in GitHub because of WARNING.")
+  # if (group != "development")
+  #   stop("Invalid group name! There is only one group in this dataset named 'development'.")
+  # if (! requireNamespace("ZebrafishDevelopmentalCAGE"))
+  #   stop ("This function requires the ", dQuote("ZebrafishDevelopmentalCAGE"),
+  #         " package; please install it from http://promshift.genereg.net/CAGEr/PackageSource/.")
+  # if (! requireNamespace("BSgenome.Drerio.UCSC.danRer7"))
+  #   stop ("This function requires the ", dQuote("BSgenome.Drerio.UCSC.danRer7"), " package.")
+  # 
+  # ZebrafishSamples <- NULL
+  # data("ZebrafishSamples", package = "ZebrafishDevelopmentalCAGE", envir = environment())
+  # 
+  # validSampleNames <- levels(ZebrafishSamples$sample)
+  # if (is.null(sample )) sample <- validSampleNames
+  # if ( ! all(sample %in% validSampleNames))
+  #   stop("At least one sample name is not valid. ",
+  #        "Valid sample names are: ", paste(validSampleNames, collapse = ", "), ".")
+  # 
+  # ZebrafishCAGE <- NULL
+  # data("ZebrafishCAGE", package = "ZebrafishDevelopmentalCAGE", envir = environment())
+  # # The vignette of ZebrafishDevelopmentalCAGE states that the provided coordinates are 1-based.
+  # ctssSE <- .df2SE(ZebrafishCAGE$development, sample, "BSgenome.Drerio.UCSC.danRer7")
+  # ce <- CAGEexp(genomeName = "BSgenome.Drerio.UCSC.danRer7",
+  #               colData = DataFrame( sampleLabels = sample,
+  #                                    inputFiles = NA,
+  #                                    inputFilesType = 'ctss',
+  #                                    librarySizes = sapply(assay(ctssSE), sum),
+  #                                    row.names = sample))
+  # CTSStagCountSE(ce) <- ctssSE
+  # ce
 }
 
 #' @rdname importPublicData
