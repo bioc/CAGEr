@@ -2,7 +2,7 @@
 
 BUG FIXES
 
--   The `importPublicData` function was repaired.
+-   The `importPublicData` function was repaired for FANTOM samples.
 
 NEW FEATURES
 
