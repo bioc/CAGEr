@@ -1,34 +1,40 @@
 #' @include CAGEexp.R
+NULL
 
-#' @name plotAnnot
-#'
-#' @title Plot annotation statistics
+#' Plot annotation statistics
 #' 
-#' @description Plot maping statistics of an object containing mapping statistics in
-#' counts as percentages in stacked barplots.
+#' Extracts processing and alignment statistics from a _CAGEr_ object and plots
+#' them as counts or percentages in stacked barplots.
+#' 
+#' When given a [`CAGEexp`] object or its _column data_, what will be counted is
+#' the number of _CAGE tags_.  When given cluster objects ([`CTSS`],
+#' [`TagClusters`] or [`ConsensusClusters`]) wrapped as
+#' a [`GenomicRanges::GRangesList`], what will be counted is the number of
+#' _clusters_.
 #' 
 #' @param x An object from which can be extracted a table with columns named
 #'        `promoter`, `exon`, `intron`, `mapped`, `extracted`, `rdna`, and
-#'        `tagdust`, that will be passed to the `mapStats` function.
-#' @param scope The name of a \dQuote{scope}, that defines which data is plotted
+#'        `tagdust`, that will be passed to the [`mapStats`] function.
+#' @param scope The name of a _scope_, that defines which data is plotted
 #'        and how it is normalised, or a function implementing that scope.
-#'        See [mapStatsScopes()] for details on each scope.
+#'        See [`mapStatsScopes`] for details on each scope.
 #' @param title The title of the plot.
 #' @param group A factor to group the samples, or the name of a `colData`
 #'        column of a `CAGEexp` object, or a formula giving the names of columns
-#'        to be pasted together.
+#'        to be pasted together.  If no group is provided the sample labels will
+#'        be used.
 #' @param facet A factor or the name of a `colData` column of a
 #'        `CAGEexp` object, to facet the samples in the sense of
-#'        `ggplot2`'s [facet_wrap][ggplot2::facet_wrap()] function.
-#' @param normalise Whether to normalise or not. Default: TRUE.
+#'        `ggplot2`'s [`ggplot2::facet_wrap()`] function.
+#' @param normalise Whether to normalise or not. Default: `TRUE`.
 #' 
-#' @return Returns invisibly a `ggplot2` object of class `c("gg", "ggplot")`.
+#' @return Returns a [`ggplot2::ggplot`] object.
 #' 
 #' @details Stacked barplots with error bars inspired from
 #' <http://stackoverflow.com/questions/10417003/stacked-barplot-with-errorbars-using-ggplot2>.
 #' See <http://www.biomedcentral.com/1471-2164/14/665/figure/F1> for example.
 #' 
-#' @seealso [mapStats()] for a list of _scopes_.
+#' @seealso [`mapStats`] for a list of _scopes_.
 #' @family CAGEr annotation functions
 #' @family CAGEr plot functions
 #' 
@@ -52,7 +58,7 @@
 #' @export
 
 setGeneric("plotAnnot", function( x, scope, title
-                                , group = "default", facet = NULL
+                                , group = "sampleLabels", facet = NULL
                                 , normalise = TRUE)
   standardGeneric("plotAnnot"))
 
@@ -120,6 +126,34 @@ setMethod("plotAnnot", "CAGEexp",
            , group = group, facet = facet, normalise = normalise)
 })
 
+.GRangesList_factor_to_dframe <- function(x, factor, group = NULL) {
+  df <- lapply(x, .GRanges_factor_to_dframe, factor = factor) |> do.call(what = rbind)
+  df$sampleLabels <- rownames(df)
+  df$librarySizes <- sapply(x, length)
+  df$group <- group
+  if(is.null(group)) df$group <- df$sampleLabels
+  rownames(df) <- NULL
+  df
+}
+
+.GRanges_factor_to_dframe <- function(x, factor) {
+  if(is.null(mcols(x)[factor])) stop("Object misses the ", factor, " metadata column.")
+  mcols(x)[factor] |> table() |> rbind() |> as.data.frame()
+}
+
+#' @rdname plotAnnot
+
+setMethod("plotAnnot", "GRangesList",
+  function( x, scope, title, group, facet, normalise) {
+  if (! is.null(x@metadata$colData)) {
+    group <- x@metadata$colData[[group]]
+  }
+  df <- .GRangesList_factor_to_dframe(x, "annotation", group)
+  plotAnnot( df
+           , scope = scope, title = title
+           , group = group, facet = facet, normalise = normalise)
+})
+
 #' @name mapStats
 #' 
 #' @title Process mapping statistics
@@ -133,7 +167,7 @@ setMethod("plotAnnot", "CAGEexp",
 #'        and how it is normalised, or a function that implements a custom scope.
 #'        See [mapStatsScopes()] for details on each scope.
 #' @param group A vector of factors defining groups in the data.  By default,
-#'        the \dQuote{group} column of the \dQuote{libs} table.
+#'        the sample labels (which means no grouping).
 #' @param facet A vector of factors defining facets in the data (in the sense
 #'        of `ggplot2`'s [facet_wrap][ggplot2::facet_wrap()] function).
 #' @param normalise Whether to normalise or not. Default: `TRUE`.
@@ -162,18 +196,11 @@ setMethod("plotAnnot", "CAGEexp",
 
 mapStats <- function( libs
                     , scope
-                    , group="default"
+                    , group="sampleLabels"
                     , facet = NULL
                     , normalise = TRUE) {
   
-  if (identical(group, "default")) {
-      if        ("group" %in% colnames(libs)) {
-        group <- libs$group
-      } else if ("Group" %in% colnames(libs)) {
-        group <- libs$Group
-    } else
-      stop(paste("Missing", dQuote("group"), "column in the data frame."))
-  }
+  if (is.null(libs$sampleLabels)) stop(paste("Missing", dQuote("sampleLabels"), "column in the data frame."))
   
   # Backup levels for later.  Coerce to factor if it was not.  This way,
   # numerical ordering is preserved despite the conversion to characters
@@ -431,6 +458,37 @@ setMethod("annotateCTSS", c("CAGEexp", "GRanges"), function (object, ranges, ups
   validObject(object)
   object
 })
+
+#' `annotateTagClusters` annotates the _tag clusters_ of a _CAGEr_ object.
+#'   
+#' @return `annotateTagClusters` returns the input object with the same
+#' modifications as above.
+#' 
+#' @examples 
+#' exampleCAGEexp <- annotateTagClusters(exampleCAGEexp, exampleZv9_annot)
+#' tagClustersGR(exampleCAGEexp, 1)
+#' 
+#' @export
+#' @rdname annotateCTSS
+
+setGeneric("annotateTagClusters", function(object, ranges, upstream=500, downstream=500)
+  standardGeneric("annotateTagClusters"))
+
+#' @rdname annotateCTSS
+
+setMethod("annotateTagClusters", c("CAGEexp", "GRanges"), function (object, ranges, upstream=500, downstream=500){
+  if(is.null(experiments(object)$tagCountMatrix))
+    stop("Input does not contain CTSS expressiond data, see ", dQuote("getCTSS()"), ".")
+  tagClustersGR(object) <- endoapply(tagClustersGR(object), function (gr) {
+    gr$annotation <- ranges2annot(gr, ranges, upstream, downstream) 
+    if(!is.null(ranges$gene_name))
+      gr$genes    <- ranges2genes(gr, ranges)
+    gr
+    })
+  validObject(object)
+  object
+})
+
 
 #' @name annotateConsensusClusters
 #' 

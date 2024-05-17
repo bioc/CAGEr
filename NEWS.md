@@ -1,3 +1,17 @@
+# Upcoming changes in version 2.11.3
+
+NEW FEATURES
+
+-   New `resetCAGEexp()` function.
+-   New `flagByUpstreamSequences()` function.
+-   The `annotateCTSS` and `annotateConsensusClusters` function gain a
+    `upstream` and a `downstream` parameter to change the width of promoter
+    regions.
+
+OTHER CHANGES
+
+-   Accelerated the computation of cumulative sums ~10×.
+
 # Upcoming changes in version 2.11.2
 
 BUG FIXES
@@ -54,12 +68,15 @@ BUG FIXES
 NEW FEATURES
 
 -   Allow URLs to files in `getCTSS()` (Fixes #50).
+<<<<<<< HEAD
 -   Accelerated the computation of cumulative sums and quantile position ~10×.
 -   New `resetCAGEexp()` function.
 -   New `flagByUpstreamSequences()` function.
 -   The `annotateCTSS` and `annotateConsensusClusters` function gain a
     `upstream` and a `downstream` parameter to change the width of promoter
     regions.
+=======
+>>>>>>> barOikPrivateBranch
 
 # Changes in version 2.6.0 (26/4/2023)
 
