@@ -3,7 +3,6 @@
 \docType{class}
 \name{CAGEr-class}
 \alias{CAGEr-class}
-\alias{CAGEr}
 \title{CAGEr objects}
 \description{
 The \emph{CAGEr} package provides one class of objects to load, contain and

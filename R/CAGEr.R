@@ -15,7 +15,6 @@ NULL
 #' promoterome mining for integrative analyses.} _Nucleic Acids Research_,
 #' 43, pp. e51., <http://nar.oxfordjournals.org/content/43/8/e51>
 #' 
-#' @aliases CAGEr
 #' @import methods
 #' @import BiocGenerics
 #' @exportClass CAGEr

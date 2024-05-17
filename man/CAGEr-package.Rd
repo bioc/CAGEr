@@ -2,6 +2,7 @@
 % Please edit documentation in R/CAGEr-package.R
 \docType{package}
 \name{CAGEr-package}
+\alias{CAGEr}
 \alias{CAGEr-package}
 \title{CAGEr: Analysis of CAGE (Cap Analysis of Gene Expression) sequencing data for precise mapping of transcription start sites and promoterome mining}
 \description{
