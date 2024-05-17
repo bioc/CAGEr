@@ -71,7 +71,6 @@ Other CAGEr plot functions:
 \code{\link{plotReverseCumulatives}()}
 
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},

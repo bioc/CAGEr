@@ -384,40 +384,6 @@ setMethod( "CTSSnormalizedTpmGR", "CAGEexp", function (object, samples) {
   gr
 })
 
-#' @name CTSSclusteringMethod
-#' 
-#' @title Get /set CTSS clustering method
-#' 
-#' @description Returns or sets the name of the method that was used make tag
-#' clusters from the CTSSs of a \code{\link{CAGEr}} object.
-#' 
-#' @param object A CAGEr object.
-#' 
-#' @seealso \code{\link{clusterCTSS}}
-#' @family CAGEr accessor methods
-#' @family CAGEr clusters functions
-#' 
-#' @author Vanja Haberle
-#' @author Charles Plessy
-#' 
-#' @examples 
-#' CTSSclusteringMethod(exampleCAGEexp)
-#' 
-#' @export CTSSclusteringMethod
-
-setGeneric("CTSSclusteringMethod", function(object) standardGeneric("CTSSclusteringMethod"))
-
-#' @rdname CTSSclusteringMethod
-
-setMethod("CTSSclusteringMethod", "GRangesList", function (object)
-	metadata(object)$clusteringMethod)
-
-#' @rdname CTSSclusteringMethod
-
-setMethod("CTSSclusteringMethod", "CAGEexp", function (object)
-  CTSSclusteringMethod(metadata(object)$tagClusters))
-
-
 #' @name tagClustersGR
 #' @rdname tagClusters
 #' 
@@ -440,14 +406,12 @@ setMethod("CTSSclusteringMethod", "CAGEexp", function (object)
 #' start coordinate of the cluster.  Used only when
 #' `returnInterquantileWidth = TRUE`, otherwise ignored.
 #' 
-#' @return Returns a `GRangesList` or a `GRanges` object with genomic coordinates,
+#' @return Returns a `GRangesList` or a `TagClusters` object with genomic coordinates,
 #' position of dominant TSS, total CAGE signal and additional information for
 #' all TCs from specified CAGE dataset (sample).  If
 #' `returnInterquantileWidth = TRUE`, interquantile width for each TC is also
 #' calculated using provided quantile positions.  The [`S4Vectors::metadata`]
-#' slot of the object contains a copy of the `CAGEexp` object's _column data_,
-#' as well as information on the clustering method in a `clusteringMethod`
-#' element.
+#' slot of the object contains a copy of the `CAGEexp` object's _column data_.
 #' 
 #' @author Vanja Haberle
 #' @author Charles Plessy
@@ -460,7 +424,6 @@ setMethod("CTSSclusteringMethod", "CAGEexp", function (object)
 #' tagClustersGR( exampleCAGEexp, "Zf.high", TRUE, 0.1, 0.9 )
 #' tagClustersGR( exampleCAGEexp, 1
 #'              , returnInterquantileWidth = TRUE, qLow = 0.1, qUp = 0.9 )
-#' tagClustersGR( exampleCAGEexp )$clusteringMethod
 #' tagClustersGR( exampleCAGEexp )@metadata$colData
 #' 
 #' @export
@@ -475,7 +438,6 @@ setGeneric( "tagClustersGR"
                                   , returnInterquantileWidth = returnInterquantileWidth
                                   , qLow = qLow, qUp = qUp))
     names(tc.list) <- sampleLabels(object)
-    metadata(tc.list)$clusteringMethod <- CTSSclusteringMethod(object)
     metadata(tc.list)$colData <- colData(object)
     return(tc.list)
   }

@@ -79,7 +79,7 @@
 #' 
 #' @author Vanja Haberle
 #' 
-#' @seealso [`tagClustersGR`], [`aggregateTagClusters`] and [`CTSSclusteringMethod`].
+#' @seealso [`aggregateTagClusters`]
 #' 
 #' @family CAGEr object modifiers
 #' @family CAGEr clusters functions
@@ -150,7 +150,6 @@ setMethod( "clusterCTSS", "CAGEexp"
     stop("Deprecated method.  See ", dQuote("CustomConsensusClusters()"), " instead.")
   }
   
-  CTSSclusteringMethod(ctss.cluster.list) <- method
   seqlevels(ctss.cluster.list) <- seqlevels(CTSStagCountSE(object))
   seqinfo(ctss.cluster.list)   <- seqinfo(CTSStagCountSE(object))
   # Changing the sequence levels may change the sort order.  Re-sort

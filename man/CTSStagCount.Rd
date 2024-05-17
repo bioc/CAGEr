@@ -56,7 +56,6 @@ CTSStagCountSE(exampleCAGEexp)
 \code{\link[=getCTSS]{getCTSS()}}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},

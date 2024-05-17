@@ -35,7 +35,6 @@ Other CAGEr expression clustering functions:
 \code{\link{plotExpressionProfiles}()}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},

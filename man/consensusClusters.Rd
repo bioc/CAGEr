@@ -77,7 +77,6 @@ consensusClustersGR( exampleCAGEexp, sample = 2
 \code{\link[=consensusClusters<-]{consensusClusters<-()}}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},
@@ -94,7 +93,6 @@ Other CAGEr accessor methods:
 \code{\link{tagClustersGR}()}
 
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},

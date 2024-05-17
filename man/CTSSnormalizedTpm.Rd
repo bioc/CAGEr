@@ -39,7 +39,6 @@ exampleCAGEexp |> CTSSnormalizedTpmGR("all")
 \code{\link{normalizeTagCount}}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSStagCountDF}()},

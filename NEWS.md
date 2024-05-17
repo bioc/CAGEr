@@ -1,5 +1,10 @@
 # Upcoming changes in version 2.11.3
 
+BACKWARDS-INCOMPATIBLE CHANGES
+
+-   Remove `CTSSclusteringMethod()` function and stop recording clustering
+    method name.
+
 NEW FEATURES
 
 -   New `resetCAGEexp()` function.
@@ -39,8 +44,7 @@ BUG FIXES
 
 # Changes in version 2.8.0 (25/10/2023)
 
-BACKWARDS-INCOMPATIBLE CHANGES
-
+ 
 -   The `CTSStagCountDA` function is removed.
 -   The _dominant peak_ in `TagClusters` objects is now a `GRanges` object like
     in `ConsensusClusters`.

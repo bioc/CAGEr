@@ -133,7 +133,7 @@ mammalian genomes, \emph{Genome Research} \strong{18}(1):1-12,
 (\href{http://www.cbrc.jp/paraclu/}{http://www.cbrc.jp/paraclu/}).
 }
 \seealso{
-\code{\link{tagClustersGR}}, \code{\link{aggregateTagClusters}} and \code{\link{CTSSclusteringMethod}}.
+\code{\link{aggregateTagClusters}}
 
 Other CAGEr object modifiers: 
 \code{\link{CTSStoGenes}()},
@@ -149,7 +149,6 @@ Other CAGEr object modifiers:
 \code{\link{summariseChrExpr}()}
 
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},

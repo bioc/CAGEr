@@ -47,7 +47,6 @@ CTSScoordinatesGR(exampleCAGEexp)
 \code{\link{clusterCTSS}}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},
 \code{\link{CTSStagCountDF}()},

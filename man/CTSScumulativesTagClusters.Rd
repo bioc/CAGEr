@@ -36,7 +36,6 @@ Accessor function.
 }
 \seealso{
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
 \code{\link{clusterCTSS}()},
@@ -48,7 +47,6 @@ Other CAGEr clusters functions:
 \code{\link{tagClustersGR}()}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSSnormalizedTpmDF}()},
 \code{\link{CTSStagCountDF}()},

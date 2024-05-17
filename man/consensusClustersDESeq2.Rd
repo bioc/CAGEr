@@ -29,7 +29,6 @@ consensusClustersDESeq2(exampleCAGEexp, ~group)
 \code{DESeqDataSet} in the \code{DESeq2} package.
 
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
