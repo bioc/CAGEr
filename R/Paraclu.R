@@ -210,5 +210,5 @@ setMethod("paraclu", "SummarizedExperiment",
              , reduceToNonoverlapping = reduceToNonoverlapping
              , useMulticore = useMulticore, nrCores = nrCores)
   }
-  tag.cluster.list
+  endoapply(tag.cluster.list, as, "TagClusters")
 })

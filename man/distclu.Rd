@@ -29,7 +29,7 @@ distclu(
 }
 \arguments{
 \item{object}{The \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::RangedSummarizedExperiment}} object
-containing CTSS information.}
+containing CTSS information, or just a \code{\link{CTSS}} object.}
 
 \item{max.dist}{Maximal distance between two neighbouring CTSSs for them to
 be part of the same cluster.}
@@ -42,6 +42,10 @@ removed.  When \code{removeSingletons = TRUE}, only singletons with signal
 \verb{< keepSingletonsAbove} will be removed.  Useful to prevent removing
 highly supported singleton tag clusters.  Default value \code{Inf} results
 in removing all singleton TCs when \code{removeSingletons = TRUE}.}
+}
+\value{
+For \code{CTSS} input, a \code{\link{TagClusters}} object, and for
+\code{SummarizedExperiment} in put, a \code{\link{GRangesList}} of \code{\link{TagClusters}} objects.
 }
 \description{
 Distance clustering

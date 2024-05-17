@@ -4,7 +4,7 @@ NULL
 #' Distance clustering
 #' 
 #' @param object The [`SummarizedExperiment::RangedSummarizedExperiment`] object
-#'        containing CTSS information.
+#'        containing CTSS information, or just a [`CTSS`] object.
 #' 
 #' @param max.dist Maximal distance between two neighbouring CTSSs for them to
 #'        be part of the same cluster.
@@ -28,6 +28,9 @@ NULL
 #'        in removing all singleton TCs when `removeSingletons = TRUE`.
 #'        
 #' @family CAGEr clustering methods
+#' 
+#' @return For `CTSS` input, a [`TagClusters`] object, and for
+#' `SummarizedExperiment` in put, a [`GRangesList`] of [`TagClusters`] objects.
 #' 
 #' @examples 
 #' distclu(CTSSnormalizedTpmGR(exampleCAGEexp, 1)[1:10])
@@ -58,7 +61,7 @@ setMethod("distclu", "SummarizedExperiment",
                 removeSingletons = removeSingletons,
                 keepSingletonsAbove = keepSingletonsAbove)
   }
-  ctss.cluster.list
+  endoapply(ctss.cluster.list, as, "TagClusters")
 })
 
 .distclu_CTSS <- function(object, max.dist, removeSingletons, keepSingletonsAbove) {
@@ -67,7 +70,7 @@ setMethod("distclu", "SummarizedExperiment",
                                          removeSingletons    = removeSingletons,
                                          keepSingletonsAbove = keepSingletonsAbove)
   names(clusters) <- seq_along(clusters)
-  clusters
+  as(clusters, "TagClusters")
 }
 
 #' @rdname distclu
