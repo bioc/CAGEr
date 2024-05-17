@@ -264,7 +264,7 @@ setMethod( "plotInterquantileWidth", "CAGEexp"
   
   # Extract a list of data frames in "long" format for ggplot
 	iqwidths <- lapply(seq_along(sampleLabels(object)), function(x) {
-    gr <- getClustFun(object, x, returnInterquantileWidth = TRUE, qLow = qLow, qUp = qUp)
+    gr <- getClustFun(object, x, qLow = qLow, qUp = qUp)
     gr <- gr[score(gr) >= tpmThreshold]
     data.frame(
       sampleName  = sampleLabels(object)[[x]],
@@ -482,7 +482,7 @@ setMethod( "exportToTrack", "CAGEexp"
 	        , CTSS              = if (oneTrack) { CTSScoordinatesGR(object)
 	                              } else { CTSStagCountGR(object, samples = "all") }
 	        , tagClusters       = tagClustersGR(      object, qLow = qLow, qUp = qUp)
-	        , consensusClusters = consensusClustersGR(object, qLow = qLow, qUp = qUp, returnInterquantileWidth = ifelse(is.null(qLow), FALSE, TRUE))) # See issue 108
+	        , consensusClusters = consensusClustersGR(object, qLow = qLow, qUp = qUp))
 	
 	exportToTrack( clusters, qLow = qLow, qUp = qUp
 	             , colorByExpressionProfile = colorByExpressionProfile

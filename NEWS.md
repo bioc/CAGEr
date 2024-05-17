@@ -4,6 +4,8 @@ BACKWARDS-INCOMPATIBLE CHANGES
 
 -   Remove `CTSSclusteringMethod()` function and stop recording clustering
     method name.
+-   Remove `returnInterquantileWidth` argument of functions and always return
+    that width when quantile information is provided.  Closes #114
 
 NEW FEATURES
 
