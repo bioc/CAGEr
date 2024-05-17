@@ -931,7 +931,6 @@ Please let me know your opinion about the names and scope of the accessors below
 Name                | Output 
 --------------------|------------------------------------------------------
 CTSScoordinatesGR   | Coordinate table in GRanges format.
-CTSStagCountDA      | Raw CTSS counts in DelayedArray format wrapping a integer Rle DataFrame.
 CTSStagCountDF      | Raw CTSS counts in integer Rle DataFrame format.
 CTSStagCountGR      | Raw CTSS counts in GRanges format (single samples).
 CTSStagCountSE      | RangedSummarizedExperiment containing an assay for the Raw CTSS counts.

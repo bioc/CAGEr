@@ -1,4 +1,4 @@
-# Upcoming changes in version 2.11.3
+# Upcoming changes in version 2.11.2
 
 BACKWARDS-INCOMPATIBLE CHANGES
 
@@ -6,20 +6,13 @@ BACKWARDS-INCOMPATIBLE CHANGES
     method name.
 -   Remove `returnInterquantileWidth` argument of functions and always return
     that width when quantile information is provided.  Closes #114
-
-NEW FEATURES
-
--   New `resetCAGEexp()` function.
--   New `flagByUpstreamSequences()` function.
--   The `annotateCTSS` and `annotateConsensusClusters` function gain a
-    `upstream` and a `downstream` parameter to change the width of promoter
-    regions.
-
-OTHER CHANGES
-
--   Accelerated the computation of cumulative sums ~10×.
-
-# Upcoming changes in version 2.11.2
+-   The `CTSStagCountDA` function is removed.
+-   The _dominant peak_ in `TagClusters` objects is now a `GRanges` object like
+    in `ConsensusClusters`.
+-   The `custom` method for tag clustering is removed.  It was obsoleted by
+    the newer `CustomConsensusClusters` function.
+-   The `exportToTrack` function now exports scores of _tag clusters_ and
+    _consensus clusters_ instead of setting them to zero.
 
 BUG FIXES
 
@@ -35,6 +28,10 @@ NEW FEATURES
     objects.  You can use them to test parameters before running the whole
     `CAGEexp` object through `clusterCTSS`.
 
+OTHER CHANGES
+
+-   Accelerated the computation of cumulative sums ~10×.
+
 # Changes in version 2.11.1
 
 BUG FIXES
@@ -45,15 +42,6 @@ BUG FIXES
     width information.  Fixes #108, #70.
 
 # Changes in version 2.8.0 (25/10/2023)
-
- 
--   The `CTSStagCountDA` function is removed.
--   The _dominant peak_ in `TagClusters` objects is now a `GRanges` object like
-    in `ConsensusClusters`.
--   The `custom` method for tag clustering is removed.  It was obsoleted by
-    the newer `CustomConsensusClusters` function.
--   The `exportToTrack` function now exports scores of _tag clusters_ and
-    _consensus clusters_ instead of setting them to zero.
 
 BUG FIXES
 
@@ -74,15 +62,12 @@ BUG FIXES
 NEW FEATURES
 
 -   Allow URLs to files in `getCTSS()` (Fixes #50).
-<<<<<<< HEAD
 -   Accelerated the computation of cumulative sums and quantile position ~10×.
 -   New `resetCAGEexp()` function.
 -   New `flagByUpstreamSequences()` function.
 -   The `annotateCTSS` and `annotateConsensusClusters` function gain a
     `upstream` and a `downstream` parameter to change the width of promoter
     regions.
-=======
->>>>>>> barOikPrivateBranch
 
 # Changes in version 2.6.0 (26/4/2023)
 
