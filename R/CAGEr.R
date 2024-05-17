@@ -3,7 +3,7 @@ NULL
  
 #' CAGEr objects
 #' 
-#' The _CAGEr_ package provides one classe of objects to load, contain and
+#' The _CAGEr_ package provides one class of objects to load, contain and
 #' process CAGE data: the [`CAGEexp`] class, introduced 2017, which is based on the
 #' [`MultiAssayExperiment`] class.  In comparison with the original `CAGEset`
 #' class (removed in 2021) `CAGEexp` objects benefit from a a more efficient data storage, using
