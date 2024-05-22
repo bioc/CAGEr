@@ -482,7 +482,6 @@ ce <- clusterCTSS( ce
                  , nrPassThreshold = 1
                  , method = "distclu"
                  , maxDist = 20
-                 , removeSingletons = TRUE
                  , keepSingletonsAbove = 5)
 ```
 

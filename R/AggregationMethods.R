@@ -151,7 +151,7 @@ setMethod( "aggregateTagClusters", "CAGEr"
   if (any(countOverlaps(clusters.gr, ctss) == 0))
     stop("Some TCs do not overlap any CTSS!")
   
-  clusters.gr <- .ctss_summary_for_clusters(ctss, clusters.gr, removeSingletons = FALSE)
+  clusters.gr <- .ctss_summary_for_clusters(ctss, clusters.gr)
 
   names(clusters.gr) <- as.character(clusters.gr)
   .ConsensusClusters(clusters.gr)

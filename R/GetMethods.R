@@ -544,7 +544,7 @@ setMethod( "consensusClustersGR", "CAGEexp"
     ctss <- CTSScoordinatesGR(object)
     score(ctss) <- CTSSnormalizedTpmDF(object) |> rowSums.RleDataFrame()
     ctss <- ctss[ctss$filteredCTSSidx]
-    cc <- .ctss_summary_for_clusters(ctss, cc, removeSingletons = FALSE)
+    cc <- .ctss_summary_for_clusters(ctss, cc)
     if (! is.null(qLow) & ! is.null(qUp)) {
       qLowName <- paste0("q_", qLow)
       qUpName  <- paste0("q_", qUp)

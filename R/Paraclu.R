@@ -15,14 +15,9 @@
 #' @param maxLength Maximal length of cluster in base-pairs.  Clusters with length
 #'        `> maxLength` will be discarded.
 #' 
-#' @param removeSingletons Logical indicating if tag clusters containing only
-#'        one CTSS be removed.
-#' 
-#' @param keepSingletonsAbove Controls which singleton tag clusters will be
-#'        removed.  When `removeSingletons = TRUE`, only singletons with signal
-#'        `< keepSingletonsAbove` will be removed.  Useful to prevent removing
-#'        highly supported singleton tag clusters.  Default value `Inf` results
-#'        in removing all singleton TCs when `removeSingletons = TRUE`.
+#' @param keepSingletonsAbove Remove "singleton" tag clusters of width 1 with
+#'        signal `< keepSingletonsAbove`.  Default value `0` results in keeping
+#'        all TCs by default.  Setting it to `Inf` removes all singletons.
 #' 
 #' @param reduceToNonoverlapping Logical, should smaller clusters contained
 #'        within bigger cluster be removed to make a final set of tag clusters
@@ -47,8 +42,8 @@
 #' Running Paraclu on a `CTSS` object dispatches the computation on each strand
 #' of each sequence level of the object, collects the `IRanges` and assemble
 #' them back in a [`TagClusters`] object after filtering them by size and by
-#' expression following the `minStability`, `maxLength`, `removeSingletons`,
-#' `keepSingletonsAbove` and `reduceToNonoverlapping` parameters.
+#' expression following the `minStability`, `maxLength`, `keepSingletonsAbove`
+#' and `reduceToNonoverlapping` parameters.
 #' 
 #' Running Paraclu on a [`RangedSummarizedExperiment`] object will loop on each
 #' sample, and return the results as a [`GRangesList`] of `TagClusters`.
@@ -72,7 +67,7 @@
 setGeneric("paraclu",
   function( object
           , minStability = 1, maxLength = 500
-          , removeSingletons = FALSE, keepSingletonsAbove = Inf
+          , keepSingletonsAbove = 0
           , reduceToNonoverlapping = TRUE
           , useMulticore = FALSE, nrCores = NULL)
    standardGeneric("paraclu"))
@@ -116,7 +111,7 @@ setGeneric("paraclu",
 setMethod("paraclu", "Pairs",
   function( object
           , minStability = 1, maxLength = 500
-          , removeSingletons = FALSE, keepSingletonsAbove = Inf
+          , keepSingletonsAbove = 0
           , reduceToNonoverlapping = TRUE
           , useMulticore = FALSE, nrCores = NULL) {
   if (length(object) == 0) return(IRanges())
@@ -129,7 +124,7 @@ setMethod("paraclu", "Pairs",
 setMethod("paraclu", "CTSS",
   function( object
           , minStability = 1, maxLength = 500
-          , removeSingletons = FALSE, keepSingletonsAbove = Inf
+          , keepSingletonsAbove = 0
           , reduceToNonoverlapping = TRUE
           , useMulticore = FALSE, nrCores = NULL) {
   # Sort and remove null ranges
@@ -157,7 +152,6 @@ setMethod("paraclu", "CTSS",
   # Compute score and dominant CTSs, and remove singletons as wanted.
   clusters <-
     .ctss_summary_for_clusters( object, clusters
-                              , removeSingletons = removeSingletons
                               , keepSingletonsAbove = keepSingletonsAbove)
   # Reduce to non-overlapping as wanted
   if(reduceToNonoverlapping == TRUE){
@@ -178,12 +172,12 @@ setMethod("paraclu", "CTSS",
 setMethod("paraclu", "GRanges",
   function( object
           , minStability = 1, maxLength = 500
-          , removeSingletons = FALSE, keepSingletonsAbove = Inf
+          , keepSingletonsAbove = 0
           , reduceToNonoverlapping = TRUE
           , useMulticore = FALSE, nrCores = NULL) {
   stopifnot(all(width(object) == 1))
   paraclu( as(object, "CTSS"), minStability = minStability, maxLength = maxLength
-         , removeSingletons = removeSingletons, keepSingletonsAbove = keepSingletonsAbove
+         , keepSingletonsAbove = keepSingletonsAbove
          , reduceToNonoverlapping = reduceToNonoverlapping
          , useMulticore = useMulticore, nrCores = nrCores)
 })
@@ -193,7 +187,7 @@ setMethod("paraclu", "GRanges",
 setMethod("paraclu", "SummarizedExperiment",
   function( object
           , minStability = 1, maxLength = 500
-          , removeSingletons = FALSE, keepSingletonsAbove = Inf
+          , keepSingletonsAbove = 0
           , reduceToNonoverlapping = TRUE
           , useMulticore = FALSE, nrCores = NULL) {
   
@@ -205,7 +199,6 @@ setMethod("paraclu", "SummarizedExperiment",
     tag.cluster.list[[s]] <-
       paraclu( gr
              , minStability = minStability, maxLength = maxLength
-             , removeSingletons = removeSingletons
              , keepSingletonsAbove = keepSingletonsAbove
              , reduceToNonoverlapping = reduceToNonoverlapping
              , useMulticore = useMulticore, nrCores = nrCores)

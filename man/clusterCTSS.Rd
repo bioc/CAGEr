@@ -12,8 +12,7 @@ clusterCTSS(
   thresholdIsTpm = TRUE,
   method = c("distclu", "paraclu"),
   maxDist = 20,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf,
+  keepSingletonsAbove = 0,
   minStability = 1,
   maxLength = 500,
   reduceToNonoverlapping = TRUE,
@@ -28,8 +27,7 @@ clusterCTSS(
   thresholdIsTpm = TRUE,
   method = c("distclu", "paraclu"),
   maxDist = 20,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf,
+  keepSingletonsAbove = 0,
   minStability = 1,
   maxLength = 500,
   reduceToNonoverlapping = TRUE,
@@ -52,14 +50,9 @@ raw tag counts (\code{FALSE}) or normalized signal (\code{TRUE}).}
 part of the same cluster.  Used only when \code{method = "distclu"},
 otherwise ignored.}
 
-\item{removeSingletons}{Logical indicating if tag clusters containing only
-one CTSS be removed.}
-
-\item{keepSingletonsAbove}{Controls which singleton tag clusters will be
-removed.  When \code{removeSingletons = TRUE}, only singletons with signal
-\verb{< keepSingletonsAbove} will be removed.  Useful to prevent removing
-highly supported singleton tag clusters.  Default value \code{Inf} results
-in removing all singleton TCs when \code{removeSingletons = TRUE}.}
+\item{keepSingletonsAbove}{Remove "singleton" tag clusters of width 1 with
+signal \verb{< keepSingletonsAbove}.  Default value \code{0} results in keeping
+all TCs by default.  Setting it to \code{Inf} removes all singletons.}
 
 \item{minStability}{Minimal stability of the cluster, where stability is
 defined as ratio between maximal and minimal density value for which
@@ -100,7 +93,7 @@ joined together if they are closer than some specified distance (see
 \code{"paraclu"} is an implementation of Paraclu algorithm for parametric
 clustering of data attached to sequences (Frith \emph{et al.}, Genome Research,
 2007).  Since Paraclu finds clusters within clusters (unlike distclu),
-additional parameters (\code{removeSingletons}, \code{keepSingletonsAbove},
+additional parameters (\code{keepSingletonsAbove},
 \code{minStability}, \code{maxLength} and \code{reduceToNonoverlapping}) can be specified to
 simplify the output by discarding too small (singletons) or too big clusters,
 and to reduce the clusters to a final set of non-overlapping clusters.
@@ -115,13 +108,13 @@ consensus clusters by calling the \code{\link{aggregateTagClusters}} function.
 # Using 'distclu', notice argument 'maxDist'
 ce <- clusterCTSS( exampleCAGEexp, threshold = 50, thresholdIsTpm = TRUE
            , nrPassThreshold = 1, method = "distclu", maxDist = 20
-           , removeSingletons = TRUE, keepSingletonsAbove = 100)
+           , keepSingletonsAbove = 100)
 tagClustersGR(ce, "Zf.30p.dome")
 
 # Using 'paraclu', notice arguments 'maxLength' and 'minStability'
 ce <- clusterCTSS( exampleCAGEexp, threshold = 50, thresholdIsTpm = TRUE
            , nrPassThreshold = 1, method = "paraclu"
-           , removeSingletons = TRUE, keepSingletonsAbove = 100
+           , keepSingletonsAbove = 100
            , maxLength = 500, minStability = 1
            , reduceToNonoverlapping = TRUE)
 tagClustersGR(ce, "Zf.30p.dome")

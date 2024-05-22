@@ -12,8 +12,7 @@ paraclu(
   object,
   minStability = 1,
   maxLength = 500,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf,
+  keepSingletonsAbove = 0,
   reduceToNonoverlapping = TRUE,
   useMulticore = FALSE,
   nrCores = NULL
@@ -23,8 +22,7 @@ paraclu(
   object,
   minStability = 1,
   maxLength = 500,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf,
+  keepSingletonsAbove = 0,
   reduceToNonoverlapping = TRUE,
   useMulticore = FALSE,
   nrCores = NULL
@@ -34,8 +32,7 @@ paraclu(
   object,
   minStability = 1,
   maxLength = 500,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf,
+  keepSingletonsAbove = 0,
   reduceToNonoverlapping = TRUE,
   useMulticore = FALSE,
   nrCores = NULL
@@ -45,8 +42,7 @@ paraclu(
   object,
   minStability = 1,
   maxLength = 500,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf,
+  keepSingletonsAbove = 0,
   reduceToNonoverlapping = TRUE,
   useMulticore = FALSE,
   nrCores = NULL
@@ -56,8 +52,7 @@ paraclu(
   object,
   minStability = 1,
   maxLength = 500,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf,
+  keepSingletonsAbove = 0,
   reduceToNonoverlapping = TRUE,
   useMulticore = FALSE,
   nrCores = NULL
@@ -76,14 +71,9 @@ Frith \emph{et al.}, Genome Research, 2007.  Clusters with stability
 \item{maxLength}{Maximal length of cluster in base-pairs.  Clusters with length
 \verb{> maxLength} will be discarded.}
 
-\item{removeSingletons}{Logical indicating if tag clusters containing only
-one CTSS be removed.}
-
-\item{keepSingletonsAbove}{Controls which singleton tag clusters will be
-removed.  When \code{removeSingletons = TRUE}, only singletons with signal
-\verb{< keepSingletonsAbove} will be removed.  Useful to prevent removing
-highly supported singleton tag clusters.  Default value \code{Inf} results
-in removing all singleton TCs when \code{removeSingletons = TRUE}.}
+\item{keepSingletonsAbove}{Remove "singleton" tag clusters of width 1 with
+signal \verb{< keepSingletonsAbove}.  Default value \code{0} results in keeping
+all TCs by default.  Setting it to \code{Inf} removes all singletons.}
 
 \item{reduceToNonoverlapping}{Logical, should smaller clusters contained
 within bigger cluster be removed to make a final set of tag clusters
@@ -104,8 +94,8 @@ metadata columns.
 Running Paraclu on a \code{CTSS} object dispatches the computation on each strand
 of each sequence level of the object, collects the \code{IRanges} and assemble
 them back in a \code{\link{TagClusters}} object after filtering them by size and by
-expression following the \code{minStability}, \code{maxLength}, \code{removeSingletons},
-\code{keepSingletonsAbove} and \code{reduceToNonoverlapping} parameters.
+expression following the \code{minStability}, \code{maxLength}, \code{keepSingletonsAbove}
+and \code{reduceToNonoverlapping} parameters.
 
 Running Paraclu on a \code{\link{RangedSummarizedExperiment}} object will loop on each
 sample, and return the results as a \code{\link{GRangesList}} of \code{TagClusters}.

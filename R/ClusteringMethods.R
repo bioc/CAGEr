@@ -22,14 +22,9 @@
 #'        part of the same cluster.  Used only when `method = "distclu"`,
 #'        otherwise ignored.
 #' 
-#' @param removeSingletons Logical indicating if tag clusters containing only
-#'        one CTSS be removed.
-#' 
-#' @param keepSingletonsAbove Controls which singleton tag clusters will be
-#'        removed.  When `removeSingletons = TRUE`, only singletons with signal
-#'        `< keepSingletonsAbove` will be removed.  Useful to prevent removing
-#'        highly supported singleton tag clusters.  Default value `Inf` results
-#'        in removing all singleton TCs when `removeSingletons = TRUE`.
+#' @param keepSingletonsAbove Remove "singleton" tag clusters of width 1 with
+#'        signal `< keepSingletonsAbove`.  Default value `0` results in keeping
+#'        all TCs by default.  Setting it to `Inf` removes all singletons.
 #' 
 #' @param minStability Minimal stability of the cluster, where stability is
 #'        defined as ratio between maximal and minimal density value for which
@@ -58,7 +53,7 @@
 #' `"paraclu"` is an implementation of Paraclu algorithm for parametric
 #' clustering of data attached to sequences (Frith _et al._, Genome Research,
 #' 2007).  Since Paraclu finds clusters within clusters (unlike distclu),
-#' additional parameters (`removeSingletons`, `keepSingletonsAbove`,
+#' additional parameters (`keepSingletonsAbove`,
 #' `minStability`, `maxLength` and `reduceToNonoverlapping`) can be specified to
 #' simplify the output by discarding too small (singletons) or too big clusters,
 #' and to reduce the clusters to a final set of non-overlapping clusters.
@@ -89,13 +84,13 @@
 #' # Using 'distclu', notice argument 'maxDist'
 #' ce <- clusterCTSS( exampleCAGEexp, threshold = 50, thresholdIsTpm = TRUE
 #'            , nrPassThreshold = 1, method = "distclu", maxDist = 20
-#'            , removeSingletons = TRUE, keepSingletonsAbove = 100)
+#'            , keepSingletonsAbove = 100)
 #' tagClustersGR(ce, "Zf.30p.dome")
 #' 
 #' # Using 'paraclu', notice arguments 'maxLength' and 'minStability'
 #' ce <- clusterCTSS( exampleCAGEexp, threshold = 50, thresholdIsTpm = TRUE
 #'            , nrPassThreshold = 1, method = "paraclu"
-#'            , removeSingletons = TRUE, keepSingletonsAbove = 100
+#'            , keepSingletonsAbove = 100
 #'            , maxLength = 500, minStability = 1
 #'            , reduceToNonoverlapping = TRUE)
 #' tagClustersGR(ce, "Zf.30p.dome")
@@ -106,7 +101,7 @@ setGeneric( "clusterCTSS"
           , function( object
                     , threshold = 1, nrPassThreshold = 1, thresholdIsTpm = TRUE
                     , method = c("distclu", "paraclu"), maxDist = 20
-                    , removeSingletons = FALSE, keepSingletonsAbove = Inf
+                    , keepSingletonsAbove = 0
                     , minStability = 1, maxLength = 500
                     , reduceToNonoverlapping = TRUE
                     , useMulticore = FALSE, nrCores = NULL)
@@ -116,7 +111,7 @@ setGeneric( "clusterCTSS"
 
 setMethod( "clusterCTSS", "CAGEexp"
          , function( object, threshold, nrPassThreshold, thresholdIsTpm, method, maxDist
-                   , removeSingletons, keepSingletonsAbove, minStability, maxLength
+                   , keepSingletonsAbove, minStability, maxLength
                    , reduceToNonoverlapping, useMulticore, nrCores) {
 
   assay <- ifelse(isTRUE(thresholdIsTpm), "normalizedTpmMatrix", "counts")
@@ -137,12 +132,10 @@ setMethod( "clusterCTSS", "CAGEexp"
 
   if (method == "distclu") {
     ctss.cluster.list <-  distclu( object = data[decode(filteredCTSSidx(object)),]
-                                 , max.dist = maxDist, removeSingletons = removeSingletons
-                                 , keepSingletonsAbove = keepSingletonsAbove)
+                                 , max.dist = maxDist, keepSingletonsAbove = keepSingletonsAbove)
   } else if (method == "paraclu") {
     ctss.cluster.list <-  paraclu( object = data[decode(filteredCTSSidx(object)),]
                                  , minStability = minStability, maxLength = maxLength
-                                 , removeSingletons = removeSingletons
                                  , keepSingletonsAbove = keepSingletonsAbove
                                  , reduceToNonoverlapping = reduceToNonoverlapping
                                  , useMulticore = useMulticore, nrCores = nrCores)

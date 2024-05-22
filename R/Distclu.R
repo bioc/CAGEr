@@ -9,23 +9,9 @@ NULL
 #' @param max.dist Maximal distance between two neighbouring CTSSs for them to
 #'        be part of the same cluster.
 #' 
-#' @param removeSingletons Logical indicating if tag clusters containing only
-#'        one CTSS be removed.
-#' 
-#' @param keepSingletonsAbove Controls which singleton tag clusters will be
-#'        removed.  When `removeSingletons = TRUE`, only singletons with signal
-#'        `< keepSingletonsAbove` will be removed.  Useful to prevent removing
-#'        highly supported singleton tag clusters.  Default value `Inf` results
-#'        in removing all singleton TCs when `removeSingletons = TRUE`.
-#'        
-#' @param removeSingletons Logical indicating if tag clusters containing only
-#'        one CTSS be removed.
-#' 
-#' @param keepSingletonsAbove Controls which singleton tag clusters will be
-#'        removed.  When `removeSingletons = TRUE`, only singletons with signal
-#'        `< keepSingletonsAbove` will be removed.  Useful to prevent removing
-#'        highly supported singleton tag clusters.  Default value `Inf` results
-#'        in removing all singleton TCs when `removeSingletons = TRUE`.
+#' @param keepSingletonsAbove Remove "singleton" tag clusters of width 1 with
+#'        signal `< keepSingletonsAbove`.  Default value `0` results in keeping
+#'        all TCs by default.  Setting it to `Inf` removes all singletons.
 #'        
 #' @family CAGEr clustering methods
 #' 
@@ -42,14 +28,13 @@ setGeneric("distclu",
   function(
     object,
     max.dist = 20,
-    removeSingletons = FALSE,
-    keepSingletonsAbove = Inf
+    keepSingletonsAbove = 0
     ) standardGeneric("distclu"))
 
 #' @rdname distclu
 
 setMethod("distclu", "SummarizedExperiment",
-          function(object, max.dist, removeSingletons, keepSingletonsAbove) {
+          function(object, max.dist, keepSingletonsAbove) {
   ctss.cluster.list <- GRangesList()
   for(s in colnames(object)) {
     message("\t-> ", s)
@@ -58,16 +43,14 @@ setMethod("distclu", "SummarizedExperiment",
     d <- subset(d, score(d) > 0)
     ctss.cluster.list[[s]] <-
       distclu(d, max.dist = max.dist,
-                removeSingletons = removeSingletons,
                 keepSingletonsAbove = keepSingletonsAbove)
   }
   endoapply(ctss.cluster.list, as, "TagClusters")
 })
 
-.distclu_CTSS <- function(object, max.dist, removeSingletons, keepSingletonsAbove) {
+.distclu_CTSS <- function(object, max.dist, keepSingletonsAbove) {
   clusters <- reduce(GRanges(object), min = max.dist)
   clusters <- .ctss_summary_for_clusters(object, clusters,
-                                         removeSingletons    = removeSingletons,
                                          keepSingletonsAbove = keepSingletonsAbove)
   names(clusters) <- seq_along(clusters)
   as(clusters, "TagClusters")

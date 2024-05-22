@@ -6,26 +6,11 @@
 \alias{distclu,CTSS-method}
 \title{Distance clustering}
 \usage{
-distclu(
-  object,
-  max.dist = 20,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf
-)
+distclu(object, max.dist = 20, keepSingletonsAbove = 0)
 
-\S4method{distclu}{SummarizedExperiment}(
-  object,
-  max.dist = 20,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf
-)
+\S4method{distclu}{SummarizedExperiment}(object, max.dist = 20, keepSingletonsAbove = 0)
 
-\S4method{distclu}{CTSS}(
-  object,
-  max.dist = 20,
-  removeSingletons = FALSE,
-  keepSingletonsAbove = Inf
-)
+\S4method{distclu}{CTSS}(object, max.dist = 20, keepSingletonsAbove = 0)
 }
 \arguments{
 \item{object}{The \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::RangedSummarizedExperiment}} object
@@ -34,14 +19,9 @@ containing CTSS information, or just a \code{\link{CTSS}} object.}
 \item{max.dist}{Maximal distance between two neighbouring CTSSs for them to
 be part of the same cluster.}
 
-\item{removeSingletons}{Logical indicating if tag clusters containing only
-one CTSS be removed.}
-
-\item{keepSingletonsAbove}{Controls which singleton tag clusters will be
-removed.  When \code{removeSingletons = TRUE}, only singletons with signal
-\verb{< keepSingletonsAbove} will be removed.  Useful to prevent removing
-highly supported singleton tag clusters.  Default value \code{Inf} results
-in removing all singleton TCs when \code{removeSingletons = TRUE}.}
+\item{keepSingletonsAbove}{Remove "singleton" tag clusters of width 1 with
+signal \verb{< keepSingletonsAbove}.  Default value \code{0} results in keeping
+all TCs by default.  Setting it to \code{Inf} removes all singletons.}
 }
 \value{
 For \code{CTSS} input, a \code{\link{TagClusters}} object, and for

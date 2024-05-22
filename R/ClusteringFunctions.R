@@ -11,9 +11,9 @@ NULL
 #' (clusters <- GRanges('chr1', IRanges(start = c(1,9), end = c(8,10)), '+'))
 #' 
 #' # The function assumes that all CTSSes have a score above zero
-#' .ctss_summary_for_clusters(ctss[score(ctss)>0], clusters, removeSingletons = TRUE)
+#' .ctss_summary_for_clusters(ctss[score(ctss)>0], clusters, keepSingletonsAbove = Inf)
 #' # If not the case, it will give incorrect nr_ctss and  fail to remove singletons
-#' .ctss_summary_for_clusters(ctss, clusters, removeSingletons = TRUE)
+#' .ctss_summary_for_clusters(ctss, clusters, keepSingletonsAbove = Inf)
 #' 
 #' # The function needs its output to be sorted and is not going to check it.
 #' .ctss_summary_for_clusters(rev(ctss), clusters)
@@ -23,7 +23,7 @@ NULL
 #' # This may create a small bias.
 #' .ctss_summary_for_clusters(ctss |> plyranges::mutate(strand = '-'), clusters |> plyranges::mutate(strand = '-'))
 
-.ctss_summary_for_clusters <- function(ctss, clusters, removeSingletons = FALSE, keepSingletonsAbove = Inf) {
+.ctss_summary_for_clusters <- function(ctss, clusters, keepSingletonsAbove = 0) {
   # Match the clusters and the CTSS
   o <- findOverlaps(clusters, ctss)
 
@@ -60,8 +60,7 @@ NULL
   clusters$nr_ctss <- rl
   
   # Remove clusters that match only one CTSS unless their expression is high enough
-  if(removeSingletons)
-    clusters <- subset(clusters, clusters$nr_ctss > 1 | score(clusters) >= keepSingletonsAbove)
+  clusters <- subset(clusters, clusters$nr_ctss > 1 | score(clusters) >= keepSingletonsAbove)
   
   # Give numerical names to the clusters
   names(clusters) <- seq_along(clusters)

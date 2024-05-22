@@ -13,6 +13,9 @@ BACKWARDS-INCOMPATIBLE CHANGES
     the newer `CustomConsensusClusters` function.
 -   The `exportToTrack` function now exports scores of _tag clusters_ and
     _consensus clusters_ instead of setting them to zero.
+-   The `removeSingletons` option of clustering methods is removed and the
+    default value of `keepSingletonsAbove` is set to `0`, which keeps the
+    standard behavior.
 
 BUG FIXES
 
