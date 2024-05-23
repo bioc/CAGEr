@@ -50,8 +50,9 @@ setMethod("distclu", "SummarizedExperiment",
 
 .distclu_CTSS <- function(object, max.dist, keepSingletonsAbove) {
   clusters <- reduce(GRanges(object), min = max.dist)
-  clusters <- .ctss_summary_for_clusters(object, clusters,
-                                         keepSingletonsAbove = keepSingletonsAbove)
+  clusters <- .ctss_summary_for_clusters(object, clusters)
+  # Remove clusters that match only one CTSS unless their expression is high enough
+  clusters <- subset(clusters, clusters$nr_ctss > 1 | score(clusters) >= keepSingletonsAbove)
   names(clusters) <- seq_along(clusters)
   as(clusters, "TagClusters")
 }

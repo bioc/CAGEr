@@ -1,19 +1,32 @@
 #' @include CAGEexp.R CTSS.R
 NULL
 
-#' @noRd
+#' Summarise CTSSs included in clusters
+#' 
+#' @param ctss A [`CTSS`] object.
+#' 
+#' @param clusters A [`TagClusters`], [`ConsensusClusters`] or any other
+#' object implementing the [`GRanges`] class.
+#' 
+#' @return The `clusters` object with a new `dominant_CTSS` metadata in `CTSS`
+#' format reporting the genomic coordinate and expression score of most
+#' highly expressed position in each cluster, plus a `nr_ctss` metadata reporting
+#' the number of expressed CTSSs in each cluster.
 #' 
 #' @importFrom S4Vectors queryHits subjectHits runLength runValue
+#' @export
 #' 
 #' @examples 
 #' # See also benchmarks/dominant_ctss.md
-#' (ctss <- GRanges('chr1', IRanges(start = 1:10, end = 1:10), '+', score = c(1, 0, 0, 1, 2, 0, 2, 1, 0, 1)))
-#' (clusters <- GRanges('chr1', IRanges(start = c(1,9), end = c(8,10)), '+'))
+#' (ctss <- CTSS( 'chr1', IRanges(start = 1:10, end = 1:10)
+#'              , '+', score = c(1, 0, 0, 1, 2, 0, 2, 1, 0, 1)))
+#' (clusters <- GRanges( 'chr1', IRanges(start = c(1,9)
+#'                     , end = c(8,10)), '+')) |> as("TagClusters")
 #' 
 #' # The function assumes that all CTSSes have a score above zero
-#' .ctss_summary_for_clusters(ctss[score(ctss)>0], clusters, keepSingletonsAbove = Inf)
+#' .ctss_summary_for_clusters(ctss[score(ctss)>0], clusters)
 #' # If not the case, it will give incorrect nr_ctss and  fail to remove singletons
-#' .ctss_summary_for_clusters(ctss, clusters, keepSingletonsAbove = Inf)
+#' .ctss_summary_for_clusters(ctss, clusters)
 #' 
 #' # The function needs its output to be sorted and is not going to check it.
 #' .ctss_summary_for_clusters(rev(ctss), clusters)
@@ -21,9 +34,13 @@ NULL
 #' 
 #' # Ties are resolved with 5' preference for both plus and minus strands.
 #' # This may create a small bias.
-#' .ctss_summary_for_clusters(ctss |> plyranges::mutate(strand = '-'), clusters |> plyranges::mutate(strand = '-'))
+#' ctss_minus <- ctss
+#' strand(ctss_minus) <- '-'
+#' clusters_minus <- clusters
+#' strand(clusters_minus) <- '-'
+#' .ctss_summary_for_clusters(ctss_minus, clusters_minus)
 
-.ctss_summary_for_clusters <- function(ctss, clusters, keepSingletonsAbove = 0) {
+.ctss_summary_for_clusters <- function(ctss, clusters) {
   # Match the clusters and the CTSS
   o <- findOverlaps(clusters, ctss)
 
@@ -47,20 +64,17 @@ NULL
   # Find absolute position of dominant CTSS in each run.
   global_max_ids <- cluster_start_idx + local_max_idx - 1
   
-  # Record dominant CTSS as GRanges object.
-  clusters$dominant_ctss <- granges(ctss)[subjectHits(o)][global_max_ids]
-  
-  # Record dominant CTSS score.  Mabye we should use its GRanges's score instead.
-  clusters$tpm.dominant_ctss <-   score(ctss)[subjectHits(o)][global_max_ids]
-  
   # Record total expression of the cluster
   score(clusters) <- Rle(sum(grouped_scores))
+  
+  # Record dominant CTSS as CTSS object.
+  clusters$dominant_ctss <- CTSS(granges(ctss)[subjectHits(o)][global_max_ids])
+  
+  # Record dominant CTSS score.
+  score(clusters$dominant_ctss) <- score(ctss)[subjectHits(o)][global_max_ids]
 
   # Count the number of clusters   
   clusters$nr_ctss <- rl
-  
-  # Remove clusters that match only one CTSS unless their expression is high enough
-  clusters <- subset(clusters, clusters$nr_ctss > 1 | score(clusters) >= keepSingletonsAbove)
   
   # Give numerical names to the clusters
   names(clusters) <- seq_along(clusters)

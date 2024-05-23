@@ -150,9 +150,9 @@ setMethod("paraclu", "CTSS",
   clusters <- clusters[(clusters$max_d  >= (minStability * clusters$min_d)) &
                        (width(clusters) <= maxLength)]
   # Compute score and dominant CTSs, and remove singletons as wanted.
-  clusters <-
-    .ctss_summary_for_clusters( object, clusters
-                              , keepSingletonsAbove = keepSingletonsAbove)
+  clusters <- .ctss_summary_for_clusters(object, clusters)
+  # Remove clusters that match only one CTSS unless their expression is high enough
+  clusters <- subset(clusters, clusters$nr_ctss > 1 | score(clusters) >= keepSingletonsAbove)
   # Reduce to non-overlapping as wanted
   if(reduceToNonoverlapping == TRUE){
     o <- findOverlaps(clusters, drop.self = TRUE, type = "within")

@@ -557,17 +557,10 @@ function( object, what, qLow, qUp, colorByExpressionProfile, oneTrack) {
 
 
 .exportToTrack_clusters <- function( object, what, qLow, qUp, colorByExpressionProfile, oneTrack) {
-  # Simplify this after the format of dominant_ctss is standardised in all cluster objects.
-  ranges_ <- function(x) {
-    if (inherits(x, "GRanges")) return(IRanges(ranges(x)))
-    IRanges(x)
-  }
-  object$thick <- ranges_(object$dominant_ctss)
+  object$thick <- IRanges(ranges(object$dominant_ctss))
   object$dominant_ctss <- NULL
   names(object) <- NULL
   object$name <- NA
-  object$nr_ctss <- NULL
-  object$tpm.dominant_ctss <- NULL
   exportToTrack( GRanges(object), qLow = qLow, qUp = qUp
                  , colorByExpressionProfile = colorByExpressionProfile
                  , oneTrack = oneTrack)

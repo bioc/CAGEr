@@ -16,6 +16,8 @@ BACKWARDS-INCOMPATIBLE CHANGES
 -   The `removeSingletons` option of clustering methods is removed and the
     default value of `keepSingletonsAbove` is set to `0`, which keeps the
     standard behavior.
+-   In cluster objects, the dominant CTSS score is now stored in the
+    `dominantCTSS` object directly.
 
 BUG FIXES
 
@@ -34,6 +36,9 @@ NEW FEATURES
 OTHER CHANGES
 
 -   Accelerated the computation of cumulative sums ~10×.
+-   Singleton filtering is now done by the `paraclu` and `distclu` functions
+    themeselves; `.ctss_summary_for_clusters` does not change the input clusters
+    except for adding information.
 
 # Changes in version 2.11.1
 
