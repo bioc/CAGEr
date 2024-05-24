@@ -1,4 +1,25 @@
-# Upcoming changes in version 2.11.2
+# Upcoming changes in version 2.11.3
+
+BACKWARDS-INCOMPATIBLE CHANGES
+
+-   The `removeSingletons` option of clustering methods is removed and the
+    default value of `keepSingletonsAbove` is set to `0`, which keeps the
+    standard behavior.
+-   In cluster objects, the dominant CTSS score is now stored in the
+    `dominantCTSS` object directly.
+-   The `clusterCTSS` function is replaced by the new `paraclu` and `distclu`
+    function.  CTSS filtering is done beforehand with the new `filterLowExpCTSS`
+    function.
+
+BUG FIXES
+
+-   CTSS filtering now works correctly with `threshold = 0, thresholdIsTpm  = TRUE`.
+
+OTHER CHANGES
+
+-   Accelerated the computation of cumulative sums ~10×.
+
+# Changes in version 2.11.2
 
 BACKWARDS-INCOMPATIBLE CHANGES
 
@@ -13,19 +34,10 @@ BACKWARDS-INCOMPATIBLE CHANGES
     the newer `CustomConsensusClusters` function.
 -   The `exportToTrack` function now exports scores of _tag clusters_ and
     _consensus clusters_ instead of setting them to zero.
--   The `removeSingletons` option of clustering methods is removed and the
-    default value of `keepSingletonsAbove` is set to `0`, which keeps the
-    standard behavior.
--   In cluster objects, the dominant CTSS score is now stored in the
-    `dominantCTSS` object directly.
--   The `clusterCTSS` function is replaced by the new `paraclu` and `distclu`
-    function.  CTSS filtering is done beforehand with the new `filterLowExpCTSS`
-    function.
 
 BUG FIXES
 
 -   The `importPublicData` function was repaired for FANTOM samples.
--   CTSS filtering now works correctly with `threshold = 0, thresholdIsTpm  = TRUE`.
 
 NEW FEATURES
 
@@ -39,7 +51,6 @@ NEW FEATURES
 
 OTHER CHANGES
 
--   Accelerated the computation of cumulative sums ~10×.
 -   Singleton filtering is now done by the `paraclu` and `distclu` functions
     themeselves; `.ctss_summary_for_clusters` does not change the input clusters
     except for adding information.
