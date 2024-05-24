@@ -1,7 +1,16 @@
 #' Parametric clustering
 #' 
-#' Implementation of Paraclu - parametric clustering of data attached to
-#' sequences (<http://www.cbrc.jp/paraclu/>).
+#' `"paraclu"` is an implementation of Paraclu algorithm for parametric
+#' clustering of data attached to sequences (Frith _et al._, Genome Research,
+#' 2007).  Since Paraclu finds clusters within clusters (unlike [`distclu`]),
+#' additional parameters (`minStability`, `maxLength` and `reduceToNonoverlapping`)
+#' can be specified to simplify the output by discarding too big clusters,
+#' and to reduce the clusters to a final set of non-overlapping clusters.
+#' 
+#' Clustering is done for every CAGE dataset within the CAGEr object separately,
+#' resulting in a different set of tag clusters for every CAGE dataset. TCs from
+#' different datasets can further be aggregated into a single referent set of
+#' consensus clusters by calling the [`aggregateTagClusters`] function.
 #' 
 #' @param object A [`CTSS`], or a [`S4Vectors::Pairs`] object with positions
 #'        _first_ and scores _second_.
@@ -48,7 +57,17 @@
 #' Running Paraclu on a [`RangedSummarizedExperiment`] object will loop on each
 #' sample, and return the results as a [`GRangesList`] of `TagClusters`.
 #' 
+#' Running Paraclu on a [`CAGEexp`] returnts is with the clusters stored as a
+#' `GRangesList` of [`TagClusters`] objects in its metadata slot `tagClusters`.
+#' 
 #' @family CAGEr clustering methods
+#' @family CAGEr object modifiers
+#' @family CAGEr clusters functions
+#' 
+#' @seealso [`aggregateTagClusters`]
+#' 
+#' @author Vanja Haberle
+#' @author Charles Plessy
 #' 
 #' @importFrom utils tail
 #' @importFrom S4Vectors Pairs first second
@@ -61,6 +80,11 @@
 #' paraclu(pair[1:10])
 #' paraclu(ctss[1:10])
 #' paraclu(CTSStagCountSE(exampleCAGEexp)[1:25,])
+#' ce <- paraclu( exampleCAGEexp,
+#'              , keepSingletonsAbove = 100
+#'              , maxLength = 500, minStability = 1
+#'              , reduceToNonoverlapping = TRUE)
+#' tagClustersGR(ce, "Zf.30p.dome")
 #'
 #' @export
 
@@ -204,4 +228,31 @@ setMethod("paraclu", "SummarizedExperiment",
              , useMulticore = useMulticore, nrCores = nrCores)
   }
   endoapply(tag.cluster.list, as, "TagClusters")
+})
+
+#' @rdname paraclu
+
+setMethod( "paraclu", "CAGEexp",
+  function( object
+          , minStability = 1, maxLength = 500
+          , keepSingletonsAbove = 0
+          , reduceToNonoverlapping = TRUE
+          , useMulticore = FALSE, nrCores = NULL) {
+  if (! "normalizedTpmMatrix" %in% assayNames(CTSStagCountSE(object)))
+    stop( "Could not find normalized CAGE signal values, see ?normalizeTagCount.\n"
+          , "distclu() needs normalized values to create its output tables, that "
+          , "include TPM expression columns.")
+  message("Clustering...")
+  ctss.cluster.list <-
+    paraclu( object = CTSStagCountSE(object)[filteredCTSSidx(object),]
+           , minStability = minStability, maxLength = maxLength
+           , keepSingletonsAbove = keepSingletonsAbove
+           , reduceToNonoverlapping = reduceToNonoverlapping
+           , useMulticore = useMulticore, nrCores = nrCores)
+  seqlevels(ctss.cluster.list) <- seqlevels(CTSStagCountSE(object))
+  seqinfo(ctss.cluster.list)   <- seqinfo(CTSStagCountSE(object))
+  # Changing the sequence levels may change the sort order.  Re-sort
+  ctss.cluster.list <- sort(ctss.cluster.list)
+  metadata(object)$tagClusters <- ctss.cluster.list
+  object
 })

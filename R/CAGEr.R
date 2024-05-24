@@ -159,41 +159,85 @@ setMethod("validSamples", "CAGEr", function (object, x){
 })
 
 
-#' @name .filterCtss
-#' @noRd
-#' @param threshold,nrPassThreshold Only CTSSs with signal \code{>= threshold} in
-#'        \code{>= nrPassThreshold} experiments will be used for clustering and will
-#'        contribute towards total signal of the cluster.
-#' @param thresholdIsTpm Logical, is threshold raw tag count value (FALSE) or
-#'        normalized signal (TRUE).
-#' @title Private function
-#' @details Check if a vector of strings or numbers can be used to identify a sample.
+#' Flag CTSSes based on sample expression
+#' 
+#' Flag CTSSes for that do not pass an expression threshold in at least a given
+#' number of samples.  This is typically used to ignore CTSSes that have been
+#' seen only once in a single sample, as they can be considered to not be
+#' reproduced.
+#' 
+#' @param object An object from the _CAGEr_ package that contains expression
+#' values for multiple samples.
+#'
+#' @param threshold Flag CTSSs with signal `< threshold`.
+#'      
+#' @param nrPassThreshold Only flag CTSSs when signal is below threshold in at
+#'        least `nrPassThreshold` samples.
+#'        
+#' @param thresholdIsTpm Logical, is threshold raw tag count value (`FALSE`) or
+#'        normalized signal (`TRUE`).
+#'        
+#' @returns `flagLowExpCTSS` returns a [`Rle`] vector where `TRUE` indicates the
+#' index of a CTSS that passes the filter.
+#' 
+#' @export
+#' 
+#' @examples
+#' flagLowExpCTSS(exampleCAGEexp, threshold = 100, nrPassThreshold = 2)
 
-setGeneric(".filterCtss", function( object
-                                  , threshold       = 0
-                                  , nrPassThreshold = 1
-                                  , thresholdIsTpm  = TRUE) {
-  if (threshold == 0) return(Rle(TRUE))
-  standardGeneric(".filterCtss")
+setGeneric("flagLowExpCTSS",  function( object
+                                      , threshold       = 1
+                                      , nrPassThreshold = 1
+                                      , thresholdIsTpm  = TRUE)
+  standardGeneric("flagLowExpCTSS")
+)
+
+#' @rdname flagLowExpCTSS
+
+setMethod("flagLowExpCTSS", "CAGEr", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
+  flagLowExpCTSS(CTSStagCountSE(object), threshold, nrPassThreshold, thresholdIsTpm)
 })
 
-setMethod(".filterCtss", "CAGEr", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
-  .filterCtss(CTSStagCountSE(object), threshold, nrPassThreshold, thresholdIsTpm)
-})
+#' @rdname flagLowExpCTSS
 
-setMethod(".filterCtss", "RangedSummarizedExperiment", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
+setMethod("flagLowExpCTSS", "RangedSummarizedExperiment", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
   assay <- ifelse(thresholdIsTpm, "normalizedTpmMatrix", "counts")
   if(assay == "normalizedTpmMatrix" & is.null(assays(object)[[assay]]))
     stop("Normalise the CAGEr object first with ", sQuote("normalizeTagCount()"), ".")
-  .filterCtss(assays(object)[[assay]], threshold, nrPassThreshold, thresholdIsTpm)
+  flagLowExpCTSS(assays(object)[[assay]], threshold, nrPassThreshold, thresholdIsTpm)
 })
 
-setMethod(".filterCtss", "DataFrame", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
+#' @rdname flagLowExpCTSS
+
+setMethod("flagLowExpCTSS", "DataFrame", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
   nr.pass.threshold <- rowSums.RleDataFrame(lapply(object, \(x) x > threshold) |> DataFrame())
   nr.pass.threshold >= min(nrPassThreshold, ncol(object))
 })
 
-setMethod(".filterCtss", "matrix", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
+#' @rdname flagLowExpCTSS
+
+setMethod("flagLowExpCTSS", "matrix", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
   nr.pass.threshold <- rowSums(object > threshold)
   nr.pass.threshold >= min(nrPassThreshold, ncol(object))
+})
+
+#' @rdname flagLowExpCTSS
+#' 
+#' @return `filterLowExpCTSS` returns the `CAGEr` object where the output of
+#' `flagLowExpCTSS` was stored internally.
+#' 
+#' @export
+
+setGeneric("filterLowExpCTSS",  function( object
+                                        , threshold       = 1
+                                        , nrPassThreshold = 1
+                                        , thresholdIsTpm  = TRUE)
+  standardGeneric("filterLowExpCTSS")
+)
+
+#' @rdname flagLowExpCTSS
+
+setMethod("filterLowExpCTSS", "CAGEr", function (object, threshold, nrPassThreshold, thresholdIsTpm) {
+  filteredCTSSidx(object) <- flagLowExpCTSS(CTSStagCountSE(object), threshold, nrPassThreshold, thresholdIsTpm)
+  object
 })

@@ -38,7 +38,8 @@ exampleCAGEexp <-
   CTSStoGenes()                                   |>
   normalizeTagCount()                             |>
   getExpressionProfiles("CTSS")                   |>
-  clusterCTSS()                                   |>
+  filterLowExpCTSS()                              |>
+  distclu()                                       |>
   annotateTagClusters(exampleZv9_annot)           |>
   cumulativeCTSSdistribution("tagClusters")       |>
   quantilePositions("tagClusters")                |>

@@ -6,6 +6,7 @@
 \alias{paraclu,CTSS-method}
 \alias{paraclu,GRanges-method}
 \alias{paraclu,SummarizedExperiment-method}
+\alias{paraclu,CAGEexp-method}
 \title{Parametric clustering}
 \usage{
 paraclu(
@@ -57,6 +58,16 @@ paraclu(
   useMulticore = FALSE,
   nrCores = NULL
 )
+
+\S4method{paraclu}{CAGEexp}(
+  object,
+  minStability = 1,
+  maxLength = 500,
+  keepSingletonsAbove = 0,
+  reduceToNonoverlapping = TRUE,
+  useMulticore = FALSE,
+  nrCores = NULL
+)
 }
 \arguments{
 \item{object}{A \code{\link{CTSS}}, or a \code{\link[S4Vectors:Pairs-class]{S4Vectors::Pairs}} object with positions
@@ -99,10 +110,23 @@ and \code{reduceToNonoverlapping} parameters.
 
 Running Paraclu on a \code{\link{RangedSummarizedExperiment}} object will loop on each
 sample, and return the results as a \code{\link{GRangesList}} of \code{TagClusters}.
+
+Running Paraclu on a \code{\link{CAGEexp}} returnts is with the clusters stored as a
+\code{GRangesList} of \code{\link{TagClusters}} objects in its metadata slot \code{tagClusters}.
 }
 \description{
-Implementation of Paraclu - parametric clustering of data attached to
-sequences (\url{http://www.cbrc.jp/paraclu/}).
+\code{"paraclu"} is an implementation of Paraclu algorithm for parametric
+clustering of data attached to sequences (Frith \emph{et al.}, Genome Research,
+2007).  Since Paraclu finds clusters within clusters (unlike \code{\link{distclu}}),
+additional parameters (\code{minStability}, \code{maxLength} and \code{reduceToNonoverlapping})
+can be specified to simplify the output by discarding too big clusters,
+and to reduce the clusters to a final set of non-overlapping clusters.
+}
+\details{
+Clustering is done for every CAGE dataset within the CAGEr object separately,
+resulting in a different set of tag clusters for every CAGE dataset. TCs from
+different datasets can further be aggregated into a single referent set of
+consensus clusters by calling the \code{\link{aggregateTagClusters}} function.
 }
 \examples{
 (ctss <- CTSSnormalizedTpmGR(exampleCAGEexp,1))
@@ -112,6 +136,11 @@ CAGEr:::.paraclu(first(pair)[1:10], second(pair)[1:10])
 paraclu(pair[1:10])
 paraclu(ctss[1:10])
 paraclu(CTSStagCountSE(exampleCAGEexp)[1:25,])
+ce <- paraclu( exampleCAGEexp,
+             , keepSingletonsAbove = 100
+             , maxLength = 500, minStability = 1
+             , reduceToNonoverlapping = TRUE)
+tagClustersGR(ce, "Zf.30p.dome")
 
 }
 \references{
@@ -120,8 +149,43 @@ for transcription initiation in mammalian genomes.}  Genome Research 2008
 18(1):1-12)
 }
 \seealso{
+\code{\link{aggregateTagClusters}}
+
 Other CAGEr clustering methods: 
 \code{\link{consensusClustersTpm}()},
 \code{\link{distclu}()}
+
+Other CAGEr object modifiers: 
+\code{\link{CTSStoGenes}()},
+\code{\link{CustomConsensusClusters}()},
+\code{\link{aggregateTagClusters}()},
+\code{\link{annotateCTSS}()},
+\code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{getCTSS}()},
+\code{\link{normalizeTagCount}()},
+\code{\link{quantilePositions}()},
+\code{\link{quickEnhancers}()},
+\code{\link{resetCAGEexp}()},
+\code{\link{summariseChrExpr}()}
+
+Other CAGEr clusters functions: 
+\code{\link{CTSScumulativesTagClusters}()},
+\code{\link{CustomConsensusClusters}()},
+\code{\link{aggregateTagClusters}()},
+\code{\link{consensusClustersDESeq2}()},
+\code{\link{consensusClustersGR}()},
+\code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{plotInterquantileWidth}()},
+\code{\link{quantilePositions}()},
+\code{\link{tagClustersGR}()}
+}
+\author{
+Vanja Haberle
+
+Charles Plessy
 }
 \concept{CAGEr clustering methods}
+\concept{CAGEr clusters functions}
+\concept{CAGEr object modifiers}

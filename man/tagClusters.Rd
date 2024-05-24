@@ -41,7 +41,7 @@ provided, interquantile width for each TC is also calculated.  The
 object's \emph{column data}.
 }
 \description{
-Extracts tag clusters (TCs) produced by \code{\link{clusterCTSS}} function
+Extracts tag clusters (TCs)
 for a specified CAGE experiment from a \code{\link{CAGEexp}} object.
 }
 \examples{
@@ -71,10 +71,11 @@ Other CAGEr clusters functions:
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{consensusClustersDESeq2}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{paraclu}()},
 \code{\link{plotInterquantileWidth}()},
 \code{\link{quantilePositions}()}
 }

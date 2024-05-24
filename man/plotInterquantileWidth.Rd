@@ -74,10 +74,11 @@ Other CAGEr clusters functions:
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{consensusClustersDESeq2}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{paraclu}()},
 \code{\link{quantilePositions}()},
 \code{\link{tagClustersGR}()}
 }

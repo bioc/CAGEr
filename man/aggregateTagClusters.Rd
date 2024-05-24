@@ -69,7 +69,7 @@ Aggregates tag clusters (TCs) across all CAGE datasets within
 the CAGEr object to create a referent set of consensus clusters.
 }
 \details{
-Since the tag clusters (TCs) returned by the \code{\link{clusterCTSS}}
+Since the tag clusters (TCs) returned by the CTSS clustering functions
 function are constructed separately for every CAGE sample within the CAGEr
 object, they can differ between samples in both their number, genomic
 coordinates, position of dominant TSS and overall signal.  To be able to
@@ -106,10 +106,11 @@ Other CAGEr object modifiers:
 \code{\link{CTSStoGenes}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{annotateCTSS}()},
-\code{\link{clusterCTSS}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
 \code{\link{getCTSS}()},
 \code{\link{normalizeTagCount}()},
+\code{\link{paraclu}()},
 \code{\link{quantilePositions}()},
 \code{\link{quickEnhancers}()},
 \code{\link{resetCAGEexp}()},
@@ -118,10 +119,11 @@ Other CAGEr object modifiers:
 Other CAGEr clusters functions: 
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{consensusClustersDESeq2}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{paraclu}()},
 \code{\link{plotInterquantileWidth}()},
 \code{\link{quantilePositions}()},
 \code{\link{tagClustersGR}()}

@@ -29,7 +29,7 @@ CTSStagCountSE(object) <- value
 \value{
 \code{CTSScoordinatesGR} returns the coordinates as a \code{\link[=CTSS]{CTSS()}} object
 wrapping genomic ranges.  A \code{filteredCTSSidx} column metadata will be present
-if \code{\link[=clusterCTSS]{clusterCTSS()}} was ran earlier.
+if \code{\link{filterLowExpCTSS}} was ran earlier.
 }
 \description{
 Extracts the genomic coordinates of all detected TSSs
@@ -43,8 +43,6 @@ CTSScoordinatesGR(exampleCAGEexp)
 }
 \seealso{
 \code{\link{getCTSS}}
-
-\code{\link{clusterCTSS}}
 
 Other CAGEr accessor methods: 
 \code{\link{CTSScumulativesTagClusters}()},

@@ -77,7 +77,7 @@ signal at individual TSS across multiple experiments.  Only TSSs with
 normalized CAGE signal \verb{>= tpmThreshold} in at least \code{nrPassThreshold} CAGE
 experiments are used for expression clustering.  However, CTSSs along the
 genome can be spatially clustered into tag clusters for each experiment
-separately using the \code{\link{clusterCTSS}} function, and then aggregated across
+separately using a CTSS clustering function, and then aggregated across
 experiments into consensus clusters using \code{\link{aggregateTagClusters}} function.
 Once the consensus clusters have been created, expression clustering at the
 level of these wider genomic regions (representing entire promoters rather

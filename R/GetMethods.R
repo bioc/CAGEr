@@ -202,10 +202,7 @@ function (object){
 #' 
 #' @return `CTSScoordinatesGR` returns the coordinates as a [CTSS()] object
 #' wrapping genomic ranges.  A `filteredCTSSidx` column metadata will be present
-#' if [clusterCTSS()] was ran earlier.
-#' 
-#' @seealso [`clusterCTSS`]
-#' 
+#' if [`filterLowExpCTSS`] was ran earlier. 
 #' 
 #' @importFrom GenomeInfoDb genome genome<-
 #' @importFrom IRanges IRanges
@@ -389,7 +386,7 @@ setMethod( "CTSSnormalizedTpmGR", "CAGEexp", function (object, samples) {
 #' 
 #' @title Extract tag clusters (TCs) for individual CAGE experiments
 #' 
-#' @description Extracts tag clusters (TCs) produced by [`clusterCTSS`] function
+#' @description Extracts tag clusters (TCs)
 #' for a specified CAGE experiment from a [`CAGEexp`] object.
 #' 
 #' @param object A `CAGEexp` object.
@@ -445,7 +442,7 @@ setMethod( "tagClustersGR", "CAGEexp"
          , function (object, sample, qLow, qUp) {
   tc <- metadata(object)$tagClusters[[sample]]
   if (is.null(tc))
-    stop( "No clusters found, run ", sQuote("clusterCTSS"), " first." , call. = FALSE)
+    stop( "No clusters found, run ", sQuote("distclu"), "or", sQuote("paraclu"), " first." , call. = FALSE)
   
   if (! is.null(qLow) & ! is.null(qUp)) {
     qLowName <- paste0("q_", qLow)

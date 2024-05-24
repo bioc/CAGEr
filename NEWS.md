@@ -18,10 +18,14 @@ BACKWARDS-INCOMPATIBLE CHANGES
     standard behavior.
 -   In cluster objects, the dominant CTSS score is now stored in the
     `dominantCTSS` object directly.
+-   The `clusterCTSS` function is replaced by the new `paraclu` and `distclu`
+    function.  CTSS filtering is done beforehand with the new `filterLowExpCTSS`
+    function.
 
 BUG FIXES
 
 -   The `importPublicData` function was repaired for FANTOM samples.
+-   CTSS filtering now works correctly with `threshold = 0, thresholdIsTpm  = TRUE`.
 
 NEW FEATURES
 

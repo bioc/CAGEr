@@ -447,6 +447,29 @@ results and parameters in the further steps that would normally refer to normali
 (denoted as tpm), will actually be raw tag counts.
 
 
+CTSS flagging
+-------------
+
+Some CTSSes have a low expression score, and are found in only a few libraries.
+In non-PCR-amplified CAGE libraries, a CTSS found in a single library with an
+expression score of 1 tag represents the detection of a single mRNA molecule's
+5-prime end.  But it could also represent the mismapping one molecule because of
+a sequencing error.  To flag CTSSes that have poor reproducibility support so
+that other steps of the analysis can ignore them, the `filterLowExpCTSS`
+function is provided.  It will add an internal flag in the `filteredCTSSidx`
+column of the `CTSS` objects, set to `FALSE` where expression is lower than a
+given threshold in a given number of samples.  This flag is later used by CTSS
+clustering and export functions.
+
+Let's flag low-fidelity TSSs supported by less than 1 normalized tag counts in
+all of the samples.
+
+```{r CTSS_flagging}
+ce <- filterLowExpCTSS(ce, thresholdIsTpm = TRUE, nrPassThreshold = 1, threshold = 1)
+CTSSnormalizedTpmGR(ce,1)
+```
+
+
 CTSS clustering
 ---------------
 
@@ -455,38 +478,23 @@ transcriptional activity of that promoter (Figure \@ref(fig:CTSSbedGraph)).  TS
 proximity of each other give rise to a functionally equivalent set of transcripts and are
 likely regulated by the same promoter elements.  Thus, TSSs can be spatially clustered into
 larger transcriptional units, called tag clusters (TCs) that correspond to individual promoters.
-_CAGEr_ supports three methods for spatial clustering of TSSs along the genome, two _ab initio_
-methods driven by the data itself, as well as assigning TSSs to predefined genomic regions:
+_CAGEr_ supports two methods for sample-specific spatial clustering of TSSs along the genome:
 
- * Simple distance-based clustering in which two neighbouring TSSs are joined together if they
+ * `distclu()`: simple distance-based clustering in which two neighbouring TSSs are joined together if they
    are closer than some specified distance (greedy algorithm);
    
- * Parametric clustering of data attached to sequences based on the density of the signal
+ * `paraclu()`: parametric clustering of data attached to sequences based on the density of the signal
    [@Frith:2007], <http://www.cbrc.jp/paraclu/>;
 
- * Counting TSSs and their signal in a set of user supplied genomic regions (_e.g._ annotation
-   derived promoter regions or other regions of interest).
-   
-These functionalities are provided in the function `clusterCTSS()`, which accepts additional
-arguments for controlling which CTSSs will be included in the clustering as well as for
-refining the final set of tag clusters.
-
 We will perform a simple distance-based clustering using 20 bp as a maximal allowed distance
-between two neighbouring TSSs. Prior to clustering we will filter out low-fidelity TSSs - the
-ones supported by less than 1 normalized tag counts in all of the samples.
+between two neighbouring TSSs.
 
 ```{r}
-ce <- clusterCTSS( ce
-                 , threshold = 1
-                 , thresholdIsTpm = TRUE
-                 , nrPassThreshold = 1
-                 , method = "distclu"
-                 , maxDist = 20
-                 , keepSingletonsAbove = 5)
+ce <- distclu(ce, maxDist = 20, keepSingletonsAbove = 5)
 ```
 
 Our final set of tag clusters will not include singletons (clusters with only one TSS), unless the
-normalized signal is above 5, \emph{i.e.} it is a reasonably supported TSS.  The `clusterCTSS`
+normalized signal is above 5, \emph{i.e.} it is a reasonably supported TSS.  The CTSS clustering functions
 function creates a set of clusters for each sample separately; for each cluster it returns the
 genomic coordinates, counts the number of TSSs within the cluster, determines the (1-based) position of the
 most frequently used (dominant) TSS, calculates the total CAGE signal within the cluster and CAGE

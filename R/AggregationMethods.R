@@ -32,7 +32,7 @@
 #' @param nrCores Number of cores to use when `useMulticore = TRUE`.  Default
 #'        (`NULL`) uses all detected cores.
 #' 
-#' @details Since the tag clusters (TCs) returned by the [`clusterCTSS`]
+#' @details Since the tag clusters (TCs) returned by the CTSS clustering functions
 #' function are constructed separately for every CAGE sample within the CAGEr
 #' object, they can differ between samples in both their number, genomic
 #' coordinates, position of dominant TSS and overall signal.  To be able to
@@ -122,7 +122,7 @@ setMethod( "aggregateTagClusters", "CAGEr"
     .aggregateTagClustersGRL(gr.list = TC.list, CAGEexp_obj = object, maxDist = maxDist)
   
   if (excludeSignalBelowThreshold) {
-    filter <- .filterCtss( object
+    filter <- flagLowExpCTSS( object
                          , threshold       = tpmThreshold
                          , nrPassThreshold = 1
                          , thresholdIsTpm  = TRUE)
@@ -244,7 +244,7 @@ setMethod( "CustomConsensusClusters", c("CAGEexp", "GRanges")
 
   clusters <- .ConsensusClusters(clusters)
   
-  filter <- .filterCtss( object
+  filter <- flagLowExpCTSS( object
                        , threshold       = threshold
                        , nrPassThreshold = nrPassThreshold
                        , thresholdIsTpm  = thresholdIsTpm)

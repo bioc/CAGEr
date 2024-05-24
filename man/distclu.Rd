@@ -4,19 +4,22 @@
 \alias{distclu}
 \alias{distclu,SummarizedExperiment-method}
 \alias{distclu,CTSS-method}
+\alias{distclu,CAGEexp-method}
 \title{Distance clustering}
 \usage{
-distclu(object, max.dist = 20, keepSingletonsAbove = 0)
+distclu(object, maxDist = 20, keepSingletonsAbove = 0)
 
-\S4method{distclu}{SummarizedExperiment}(object, max.dist = 20, keepSingletonsAbove = 0)
+\S4method{distclu}{SummarizedExperiment}(object, maxDist = 20, keepSingletonsAbove = 0)
 
-\S4method{distclu}{CTSS}(object, max.dist = 20, keepSingletonsAbove = 0)
+\S4method{distclu}{CTSS}(object, maxDist = 20, keepSingletonsAbove = 0)
+
+\S4method{distclu}{CAGEexp}(object, maxDist = 20, keepSingletonsAbove = 0)
 }
 \arguments{
 \item{object}{The \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::RangedSummarizedExperiment}} object
 containing CTSS information, or just a \code{\link{CTSS}} object.}
 
-\item{max.dist}{Maximal distance between two neighbouring CTSSs for them to
+\item{maxDist}{Maximal distance between two neighbouring CTSSs for them to
 be part of the same cluster.}
 
 \item{keepSingletonsAbove}{Remove "singleton" tag clusters of width 1 with
@@ -24,20 +27,69 @@ signal \verb{< keepSingletonsAbove}.  Default value \code{0} results in keeping
 all TCs by default.  Setting it to \code{Inf} removes all singletons.}
 }
 \value{
-For \code{CTSS} input, a \code{\link{TagClusters}} object, and for
-\code{SummarizedExperiment} in put, a \code{\link{GRangesList}} of \code{\link{TagClusters}} objects.
+For \code{CTSS} input, a \code{\link{TagClusters}} object, for
+\code{SummarizedExperiment} input, a \code{\link{GRangesList}} of \code{\link{TagClusters}} objects,
+and for \code{\link{CAGEexp}} input, a modified object containing the tag clusters
+stored as a \code{GRangesList} of \code{\link{TagClusters}} objects in its metadata slot
+\code{tagClusters}.
 }
 \description{
-Distance clustering
+The \code{"distclu"} method is an implementation of simple distance-based
+clustering of data attached to sequences, where two neighbouring TSSs are
+joined together if they are closer than some specified distance (see
+\code{\link[GenomicRanges:inter-range-methods]{GenomicRanges::reduce}} for implementation details.
+}
+\details{
+Clustering is done for every CAGE dataset within the CAGEr object separately,
+resulting in a different set of tag clusters for every CAGE dataset. TCs from
+different datasets can further be aggregated into a single referent set of
+consensus clusters by calling the \code{\link{aggregateTagClusters}} function.
 }
 \examples{
 distclu(CTSSnormalizedTpmGR(exampleCAGEexp, 1)[1:10])
 distclu(CTSStagCountSE(exampleCAGEexp)[1:25,])
+ce <- distclu(exampleCAGEexp, maxDist = 20, keepSingletonsAbove = 100)
+tagClustersGR(ce, "Zf.30p.dome")
 
 }
 \seealso{
+\code{\link{aggregateTagClusters}}
+
 Other CAGEr clustering methods: 
 \code{\link{consensusClustersTpm}()},
 \code{\link{paraclu}()}
+
+Other CAGEr object modifiers: 
+\code{\link{CTSStoGenes}()},
+\code{\link{CustomConsensusClusters}()},
+\code{\link{aggregateTagClusters}()},
+\code{\link{annotateCTSS}()},
+\code{\link{cumulativeCTSSdistribution}()},
+\code{\link{getCTSS}()},
+\code{\link{normalizeTagCount}()},
+\code{\link{paraclu}()},
+\code{\link{quantilePositions}()},
+\code{\link{quickEnhancers}()},
+\code{\link{resetCAGEexp}()},
+\code{\link{summariseChrExpr}()}
+
+Other CAGEr clusters functions: 
+\code{\link{CTSScumulativesTagClusters}()},
+\code{\link{CustomConsensusClusters}()},
+\code{\link{aggregateTagClusters}()},
+\code{\link{consensusClustersDESeq2}()},
+\code{\link{consensusClustersGR}()},
+\code{\link{cumulativeCTSSdistribution}()},
+\code{\link{paraclu}()},
+\code{\link{plotInterquantileWidth}()},
+\code{\link{quantilePositions}()},
+\code{\link{tagClustersGR}()}
+}
+\author{
+Vanja Haberle
+
+Charles Plessy
 }
 \concept{CAGEr clustering methods}
+\concept{CAGEr clusters functions}
+\concept{CAGEr object modifiers}
