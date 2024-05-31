@@ -440,6 +440,8 @@ msScope_annotation <- function(libs) {
 #' annotateCTSS(exampleCAGEexp, exampleZv9_annot)
 #' colData(exampleCAGEexp)
 #' 
+#' @importFrom GenomicFeatures genes
+#' 
 #' @export
 
 setGeneric("annotateCTSS", function(object, ranges, upstream=500, downstream=500)
