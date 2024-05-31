@@ -1,4 +1,4 @@
-#' @include CAGEr.R
+#' @include CAGEr.R Paraclu.R
 
 #' @name plotCorrelation
 #' 
@@ -71,6 +71,7 @@
 #' 
 #' plotCorrelation2(exampleCAGEexp, what = "consensusClusters", value = "normalized")
 #' 
+#' @importFrom graphics box legend par strwidth text
 #' @export
 
 setGeneric( "plotCorrelation"

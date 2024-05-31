@@ -44,7 +44,6 @@ genomeName(exampleCAGEexp)
 }
 \seealso{
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},
@@ -53,16 +52,16 @@ Other CAGEr accessor methods:
 \code{\link{GeneExpSE}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{expressionClasses}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},
 \code{\link{sampleLabels}()},
 \code{\link{seqNameTotalsSE}()},
 \code{\link{tagClustersGR}()}
 
 Other CAGEr setter methods: 
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{sampleLabels}()},
 \code{\link{setColors}()}
 }

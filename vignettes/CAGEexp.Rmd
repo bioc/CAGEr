@@ -3,6 +3,7 @@ title: "CAGEr: an R package for CAGE (Cap Analysis of Gene Expression) data anal
 author:
  - "Vanja Haberle"
  - "Charles Plessy"
+ - "Sarvesh Nikumbh"
 package: CAGEr
 output: 
   BiocStyle::html_document:
@@ -27,8 +28,8 @@ set.seed(0xdada)
 Introduction
 ============
 
-This document briefly how to use `r Biocpkg("CAGEr")` _CAGEr_, a Bioconductor package designed
-to process, analyse and visualise Cap Analysis of Gene Expression (CAGE)sequencing data.
+This document describes how to use `r Biocpkg("CAGEr")` _CAGEr_, a Bioconductor package designed
+to process, analyse and visualise Cap Analysis of Gene Expression (CAGE) sequencing data.
 CAGE [@Kodzius:2006] is a high-throughput method for transcriptome analysis that utilizes
 _cap trapping_ [@Carninci:1996], a technique based on the biotinylation of the 7-methylguanosine
 cap of Pol II transcripts, to pulldown the 5′-complete cDNAs reversely transcribed from
@@ -100,7 +101,7 @@ publicly available CAGE data produced by major consortia including FANTOM and EN
 available from <http://promshift.genereg.net/CAGEr/>. In addition, direct fetching of TSS data from
 FANTOM5 web resource (the largest collection of TSS data for human and mouse) from within _CAGEr_ is
 also available. These are all valuable resources of genome-wide TSSs in various tissue/cell types
-for various model organisms that can be used directly in R. Section 5 in this vignette describes how
+for various model organisms that can be used directly in R.  A separate vignette describes how
 these public datasets can be included into a workflow provided by _CAGEr_. For further
 information on the content of the data packages and the list of available CAGE datasets please refer
 to the vignette of the corresponding data package.
@@ -132,12 +133,12 @@ _CAGEr_ package supports three types of CAGE data input:
    subset of these data can be used as input for \Rpackage{CAGEr}.
 
 The type and the format of the input files is specified at the beginning of the workflow, when the
-`CAGEset` object is created (section 4.2). This is done by setting the `inputFilesType` argument,
+`CAGEset` object is created (section 3.2). This is done by setting the `inputFilesType` argument,
 which accepts the following self-explanatory options referring to formats mentioned above:
 `"bam", "bamPairedEnd", "bed", "ctss", "CTSStable"`.
 
 In addition, the package provides a method for coercing a `data.frame` object containing single
-base-pair TSS information into a `CAGEset` object (as described in section 4.2.1), which can be
+base-pair TSS information into a `CAGEset` object (as described in section 4.1), which can be
 further used in the workflow described below. 
 
 
@@ -154,7 +155,7 @@ specific functions.  The _CAGEexp_ objects are an extension of the
 methods.  The expression data is stored in _CAGEexp_ using
 `r Biocpkg("SummarizedExperiment")` objects, and can also access their methods.
 
-To load the _CAGEr_ package and the other libraries into your R envirnoment type:
+To load the _CAGEr_ package and the other libraries into your R environment type:
 
 ```{r load_CAGEr}
 library(CAGEr)
@@ -172,19 +173,19 @@ It will be automatically loaded by _CAGEr_ commands when needed.
 
 In case the data is mapped to a genome that is not readily available through
 _BSgenome_ package (not in the list returned by `BSgenome::available.genomes()`
-function), a custom _BSgenome_ package has to be build and installed first.
+function), a custom _BSgenome_ package can be build and installed first.
 (See the vignette within the _BSgenome_ package for instructions on how to build
 a custom genome package). The `genomeName` argument can then be set to the name
 of the build genome package when creating a `CAGEexp` object (see the section
-_Creating `CAGEexp` object_ below).
+_Creating `CAGEexp` object_ below).  It can also be set to `NULL` as a last
+resort when no _BSgenome_ package is available.
 
-The _BSgenome_ package is used to access information about the chromosomes
-(sequence, length, circularity).  By default, _CAGEr_ will discard alignments
-that are not on chromosomes named in the _BSgenome_ package.  The `genomeName`
-argument can be set to `NULL` in order to suppress this behaviour, or as a last
-resort when no _BSgenome_ package is available.  However, _CAGEr_ functions that
-need access to the genome sequence, for instance for _G-correction_ will not
-work in that case.
+The _BSgenome_ package is required by the _CAGEr_ functions that need access to
+the genome sequence, for instance for _G-correction_.  It is also used provide
+`seqinfo` information to the various Bioconductor objects produced by _CAGEr_.
+For this reason, _CAGEr_ will discard alignments that are not on chromosomes
+named in the _BSgenome_ package.  If this is not desirable, set `genomeName`
+to `NULL`.
 
 ### Specifying input files
 
@@ -200,15 +201,15 @@ replicas). The data in files is organized in four tab-separated columns as
 described above in section \@ref(input-formats).
 
 ```{r specify_input_files}
-inputFiles = list.files( system.file("extdata", package = "CAGEr")
-                       , "ctss$"
-                       , full.names = TRUE)
+inputFiles <- list.files( system.file("extdata", package = "CAGEr")
+                        , "ctss$"
+                        , full.names = TRUE)
 ```
 
 ### Creating the object
 
-The _CAGEexp_ object is crated with the `CAGEexp` contstructor, that requries
-information on file path an type, sample names and reference genome name.
+The _CAGEexp_ object is crated with the `CAGEexp` constructor, that requires
+information on file path and type, sample names and reference genome name.
 
 ```{r create_CAGEexp}
 ce <- CAGEexp( genomeName     = "BSgenome.Drerio.UCSC.danRer7"
@@ -224,8 +225,12 @@ To display the created object type:
 ce
 ```
 
-The supplied information can be seen in the _Input data information_ section, whereas all other
+The supplied information can be seen with the `colData` accessor, whereas all other
 slots are still empty, since no data has been read yet and no analysis conducted.
+
+```{r show_colData}
+colData(ce)
+```
 
 
 Reading in the data
@@ -335,6 +340,19 @@ corr.m <- plotCorrelation2( ce, samples = "all"
                           , method = "pearson")
 ```
 
+### Sequence distribution at the transcription start site.
+
+The presence of the core promoter motifs can be checked with the `TSSlogo()`
+function, provided that the _CAGEexp_ object was built with a _BSgenome_
+package allowing access to the sequence flanking the transcription start sites.
+
+```{r TSSlogo, fig.cap="Sequence logo at the transcription start site"}
+TSSlogo(CTSScoordinatesGR(ce) |> subset(annotation == "promoter"), upstream = 35)
+```
+
+The `TSSlogo()` function can also be used later.  When passed _tag clusters_
+or _consensus clusters_, it will automatically center the regions on their
+_dominant peak_.
 
 Merging of replicates
 ---------------------
@@ -386,7 +404,7 @@ To check whether our CAGE datasets follow power-law distribution and in which ra
 can use the `plotReverseCumulatives` function:
 
 ```{r ReverseCumulatives, fig.cap="Reverse cumulative distribution of CAGE tags"}
-plotReverseCumulatives(ce, fitInRange = c(5, 1000), onePlot = TRUE)
+plotReverseCumulatives(ce, fitInRange = c(5, 1000))
 ```
 
 In addition to the reverse cumulative plots (Figure \@ref(fig:ReverseCumulatives)), a power-law
@@ -429,6 +447,29 @@ results and parameters in the further steps that would normally refer to normali
 (denoted as tpm), will actually be raw tag counts.
 
 
+CTSS flagging
+-------------
+
+Some CTSSes have a low expression score, and are found in only a few libraries.
+In non-PCR-amplified CAGE libraries, a CTSS found in a single library with an
+expression score of 1 tag represents the detection of a single mRNA molecule's
+5-prime end.  But it could also represent the mismapping one molecule because of
+a sequencing error.  To flag CTSSes that have poor reproducibility support so
+that other steps of the analysis can ignore them, the `filterLowExpCTSS`
+function is provided.  It will add an internal flag in the `filteredCTSSidx`
+column of the `CTSS` objects, set to `FALSE` where expression is lower than a
+given threshold in a given number of samples.  This flag is later used by CTSS
+clustering and export functions.
+
+Let's flag low-fidelity TSSs supported by less than 1 normalized tag counts in
+all of the samples.
+
+```{r CTSS_flagging}
+ce <- filterLowExpCTSS(ce, thresholdIsTpm = TRUE, nrPassThreshold = 1, threshold = 1)
+CTSSnormalizedTpmGR(ce,1)
+```
+
+
 CTSS clustering
 ---------------
 
@@ -437,41 +478,25 @@ transcriptional activity of that promoter (Figure \@ref(fig:CTSSbedGraph)).  TS
 proximity of each other give rise to a functionally equivalent set of transcripts and are
 likely regulated by the same promoter elements.  Thus, TSSs can be spatially clustered into
 larger transcriptional units, called tag clusters (TCs) that correspond to individual promoters.
-_CAGEr_ supports three methods for spatial clustering of TSSs along the genome, two _ab initio_
-methods driven by the data itself, as well as assigning TSSs to predefined genomic regions:
+_CAGEr_ supports two methods for sample-specific spatial clustering of TSSs along the genome:
 
- * Simple distance-based clustering in which two neighbouring TSSs are joined together if they
+ * `distclu()`: simple distance-based clustering in which two neighbouring TSSs are joined together if they
    are closer than some specified distance (greedy algorithm);
    
- * Parametric clustering of data attached to sequences based on the density of the signal
+ * `paraclu()`: parametric clustering of data attached to sequences based on the density of the signal
    [@Frith:2007], <http://www.cbrc.jp/paraclu/>;
 
- * Counting TSSs and their signal in a set of user supplied genomic regions (_e.g._ annotation
-   derived promoter regions or other regions of interest).
-   
-These functionalities are provided in the function `clusterCTSS()`, which accepts additional
-arguments for controlling which CTSSs will be included in the clustering as well as for
-refining the final set of tag clusters.
-
 We will perform a simple distance-based clustering using 20 bp as a maximal allowed distance
-between two neighbouring TSSs. Prior to clustering we will filter out low-fidelity TSSs - the
-ones supported by less than 1 normalized tag counts in all of the samples.
+between two neighbouring TSSs.
 
 ```{r}
-ce <- clusterCTSS( ce
-                 , threshold = 1
-                 , thresholdIsTpm = TRUE
-                 , nrPassThreshold = 1
-                 , method = "distclu"
-                 , maxDist = 20
-                 , removeSingletons = TRUE
-                 , keepSingletonsAbove = 5)
+ce <- distclu(ce, maxDist = 20, keepSingletonsAbove = 5)
 ```
 
 Our final set of tag clusters will not include singletons (clusters with only one TSS), unless the
-normalized signal is above 5, \emph{i.e.} it is a reasonably supported TSS.  The `clusterCTSS`
+normalized signal is above 5, \emph{i.e.} it is a reasonably supported TSS.  The CTSS clustering functions
 function creates a set of clusters for each sample separately; for each cluster it returns the
-genomic coordinates, counts the number of TSSs within the cluster, determines the position of the
+genomic coordinates, counts the number of TSSs within the cluster, determines the (1-based) position of the
 most frequently used (dominant) TSS, calculates the total CAGE signal within the cluster and CAGE
 signal supporting the dominant TSS only.  We can extract tag clusters for a desired sample from
 `CAGEexp` object by calling the `tagClustersGR` function:
@@ -502,7 +527,7 @@ calculated as following:
 
  1. Cumulative distribution of CAGE signal along the cluster is calculated.
  2. A "lower" (`qLow`) and an "upper" (`qUp`) quantile are selected by the user.
- 3. From the 5′ end the position, the position of a quantile $q$ is detemined as
+ 3. From the 5′ end the position, the position of a quantile $q$ is determined as
     the first base in which of the cumulative expression is higher or equal to
     $q\%$ of the total CAGE signal of that cluster.
  4. Promoter _interquantile width_ is defined as the distance (in base pairs)
@@ -526,8 +551,7 @@ ce <- quantilePositions(ce, clusters = "tagClusters", qLow = 0.1, qUp = 0.9)
 Tag clusters and their interquantile width can be retrieved by calling `tagClusters` function:
 
 ```{r}
-tagClustersGR( ce, "Zf.unfertilized.egg"
-             , returnInterquantileWidth = TRUE,  qLow = 0.1, qUp = 0.9)
+tagClustersGR(ce, "Zf.unfertilized.egg",  qLow = 0.1, qUp = 0.9)
 ```
 
 Once the cumulative distributions and the positions of quantiles have been calculated, the
@@ -590,11 +614,15 @@ different samples.  Sample-specific information on consensus clusters can be ret
 tag clusters):
 
 ```{r}
-consensusClustersGR( ce, sample = "Zf.unfertilized.egg"
-		               , returnInterquantileWidth = TRUE,  qLow = 0.1, qUp = 0.9)
+consensusClustersGR(ce, sample = "Zf.unfertilized.egg", qLow = 0.1, qUp = 0.9)
 ```
 
 This will, in addition to genomic coordinates of the consensus clusters, which are constant across all samples, also return the position of the dominant TSS, the CAGE signal (tpm) and the interquantile width specific for a given sample. Note that when specifying individual sample, only the consensus clusters that have some CAGE signal in that sample will be returned (which will be a subset of all consensus clusters).
+When setting `sample = NULL` sample-agnostic information per consensus cluster 
+is provided. 
+This includes the interquantile width and dominant TSS information for each 
+consensus cluster independent of the samples when specifying interquantile boundaries `qLow` and `qUp`.
+
 
 
 Track export for genome browsers
@@ -604,7 +632,7 @@ CAGE data can be visualized in the genomic context by converting raw or
 normalized CAGE tag counts to a track object and exporting it to a file format
 such as _BED_, _bedGraph_ or _BigWig_ for uploading (or linking) to a genome
 browser`^[Note that the [ZENBU genome browser](http://fantom.gsc.riken.jp/zenbu)
-can also display natively data from BAMor BED files as coverage tracks.].  The
+can also display natively data from BAM or BED files as coverage tracks.].  The
 \Rfunction(exportToTrack) function can take a variety of inputs representing
 _CTSS_, _Tag Clusters_ or _Consensus Clusters_, with raw or normalised
 expression scores.  When asked to export multiple samples it will return
@@ -705,13 +733,15 @@ belonging to a specific cluster by typing commands like:
 consensusClustersGR(ce) |> subset(consensusClustersGR(ce)$exprClass ==  "0_1")
 ```
 
-Consensus clusters and information on their expression profile can be exported to a BED file, which allows visualization of the promoters in the 
-genome browser colored in the color of the expression cluster they belong to (Figure \@ref(fig:ConsensusClustersBed):
+Consensus clusters and information on their expression profile can be exported
+to a BED file, which allows visualization of the promoters in the genome browser
+colored in the color of the expression cluster they belong to
+(Figure \@ref(fig:ConsensusClustersBed):
 
 ```{r}
-# Not supported yet for CAGEexp objects, sorry.
-# exportToBed(ce, what = "consensusClusters", 
-# 		colorByExpressionProfile = TRUE)
+cc_iqtrack <- exportToTrack(ce, what = "consensusClusters", colorByExpressionProfile = TRUE)
+cc_iqtrack
+#rtracklayer::export.bed(cc_iqtrack, "outputFileName.bed")
 ```
 
 ```{r ConsensusClustersBed, echo=FALSE, fig.align="center", fig.cap="Consensus clusters colored by expression profile in the genome browser"}
@@ -764,9 +794,8 @@ Next, we calculate a shifting score and P-value of Kolmogorov-Smirnov test for
 all promoters comparing two specified samples:
 
 ```{r}
-# Not supported yet for CAGEexp objects, sorry.
-# scoreShift(ce, groupX = "Zf.unfertilized.egg", groupY = "zf_prim6",
-# 		testKS = TRUE, useTpmKS = FALSE)
+ce <- scoreShift(ce, groupX = "Zf.unfertilized.egg", groupY = "Zf.prim6",
+		testKS = TRUE, useTpmKS = FALSE)
 ```
 
 This function will calculate shifting score as illustrated in
@@ -796,7 +825,7 @@ ECDFs.  These are derived either from raw tag counts, _i.e._ exact number of
 times each TSS in the cluster was sampled during sequencing (when
 `useTpmKS = FALSE`), or from normalized tpm values (when `useTpmKS = TRUE`).
 P-values obtained from K-S tests are further corrected for multiple testing
-using Benjamini and Hochenberg (BH) method and for each P-value a corresponding
+using Benjamini and Hochberg (BH) method and for each P-value a corresponding
 false-discovery rate (FDR) is also reported.
 
 ```{r ShiftingScore, echo=FALSE, fig.cap="Calculation of shifting score"}
@@ -807,10 +836,11 @@ We can select a subset of promoters with shifting score and/or FDR above specifi
 
 ```{r}
 # Not supported yet for CAGEexp objects, sorry.
-# shifting.promoters <- getShiftingPromoters(ce, 
-# 		tpmThreshold = 5, scoreThreshold = 0.6,
-# 		fdrThreshold = 0.01)
-# head(shifting.promoters)
+shifting.promoters <- getShiftingPromoters(ce, 
+    groupX = "Zf.unfertilized.egg", groupY = "Zf.prim6",
+		tpmThreshold = 5, scoreThreshold = 0.6,
+		fdrThreshold = 0.01)
+head(shifting.promoters)
 ```
 
 The `getShiftingPromoters` function returns genomic coordinates, shifting score
@@ -824,6 +854,20 @@ promoters.
 knitr::include_graphics("images/ShiftingPromoter.svg")
 ```
 
+Enhancers
+---------
+
+The FANTOM5 project reported that “_enhancer activity can be detected through
+the presence of balanced bidirectional capped transcripts_”  [@Andersson:2014].
+The _CAGEr_ package is providing a wrapper to the _CAGEfightR_ package's
+function `quickEnhancers` so that it can run directly on _CAGEexp_ objects.
+The wrapper returns a modified _CAGEexp_ object in which the results are stored
+in its `enhancers` experiment slot.
+
+```{r }
+ce <- quickEnhancers(ce)
+ce[["enhancers"]]
+```
 
 Appendix
 ========
@@ -894,7 +938,6 @@ Please let me know your opinion about the names and scope of the accessors below
 Name                | Output 
 --------------------|------------------------------------------------------
 CTSScoordinatesGR   | Coordinate table in GRanges format.
-CTSStagCountDA      | Raw CTSS counts in DelayedArray format wrapping a integer Rle DataFrame.
 CTSStagCountDF      | Raw CTSS counts in integer Rle DataFrame format.
 CTSStagCountGR      | Raw CTSS counts in GRanges format (single samples).
 CTSStagCountSE      | RangedSummarizedExperiment containing an assay for the Raw CTSS counts.
@@ -958,13 +1001,29 @@ Name              | Comment
 ------------------|-------------------------------------------------------------------------
 CAGEset           | The original CAGEr class, based on data frames and matrices.
 CAGEexp           | The new CAGEr class, based on GRanges, DataFrames, etc.
-CAGEr             | Union classs for functions that accept both CAGEset and CAGEexp.
+CAGEr             | Union class for functions that accept both CAGEset and CAGEexp.
 CTSS              | Wraps GRanges and guarantees that width equals 1.
-CTSS.chr          | Same as CTSS but also guaranteers the there is only one chromosome (useful in some loops)
+CTSS.chr          | Same as CTSS but also guarantees the there is only one chromosome (useful in some loops)
 TagClusters       | Wraps GRanges, represents the fact that each sample has their own tag clusters.
 ConsensusClusters | Wraps GRanges, represents the fact that they are valid for all the samples.
 CAGErCluster      | Union class for functions that accept both TagClusters and ConsensusClusters.
 
+Paired-end CAGE read alignment with the _nf-core/rnaseq_ pipeline
+-----------------------------------------------------------------
+
+The modern CAGE protocols starting from _nAnTi-CAGE_ [@Murata:2014] onward can be
+sequenced paired-end when they are random-primed.  Many aligners can map the
+read pairs but it is important to pay attention to the way they encode the
+existence of unmapped extra G bases in their output (typically in BAM format).
+
+_CAGEr_ is able to read the BAM files of the HiSAT2 aligner produced by the
+[_nf-co.re/rnaseq_ pipeline](https://nf-co.re/rnaseq).  One of the benefits of
+using a full pipeline to produce the alignment files is that the results will
+include some quality controls that can be used to identify defects before
+investing more time in the _CAGEr_ analysis.  Optionally, the first 6 or 9 bases
+(depending on the protocol) of Read 2 may be clipped, as they originate from the
+random primer and not from the RNA.  However, forgetting to do so has very
+little impact on the results.
 
 Session info {.unnumbered}
 ==========================

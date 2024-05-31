@@ -25,7 +25,7 @@ Returns a character vector of paths to CAGE data input files.
 }
 \description{
 Extracts the paths to CAGE data input files from
-code{\link{CAGEexp}} objects.
+\code{\link{CAGEexp}} objects.
 }
 \examples{
 inputFiles(exampleCAGEexp)
@@ -33,7 +33,6 @@ inputFiles(exampleCAGEexp)
 }
 \seealso{
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},

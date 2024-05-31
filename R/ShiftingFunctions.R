@@ -2,14 +2,22 @@
 
 #####
 # Function that calculates reversed cumulative sums given a list of cumulative sums
-# ARGUMENTS: cumsum.list - list of Rle vectors (IRanges package) with cumulative sums (first number in the vector needs to be a zero) (such as returned by 'get.cumsum' function)
-# RETURNS: list of Rle vectors containing reversed cumulative sums for all elements in the input cumsum list (Rle vectors are shorter by 1 than original vectors because first zero (i.e. here last number) is omitted) 
+# ARGUMENTS: cumsum.list - list or RleList of Rle vectors (S4Vectors package)
+# with cumulative such as returned by the '.get.cumsum' function.
+# RETURNS: list of Rle vectors containing reversed cumulative sums for all
+# elements in the input cumsum list.
+# EXAMPLE:
+# (cs <- list(cumsum(1:10), cumsum(0:9), cumsum(c(0,0,1,0,8,2,1,0,1,0))))
+# RleList(.reverse.cumsum(cs))
+# .reverse.cumsum(RleList(cs))
 
 .uncumsum <- function(x) c(x[1], diff(x))
- 
-.reverse.cumsum <- function(cumsum.list, useMulticore = F, nrCores = NULL)
-  bplapply(cumsum.list, function(x) cumsum(rev(.uncumsum(x)))
+
+.reverse.cumsum <- function(cumsum.list, useMulticore = F, nrCores = NULL) {
+  bplapply( cumsum.list
+          , function(x) cumsum(rev(.uncumsum(x)))
           , BPPARAM = CAGEr_Multicore(useMulticore, nrCores))
+}
 
 .get.dominant.ctss <- function(v, isCumulative = FALSE){
   if (all(unique(v) == 0)) return(NA)
@@ -35,7 +43,11 @@
 
 #####
 # Function that calculates total tag count in CAGE clusters
-# ARGUMENTS: ctss.df - data frame with one row per CTSS containing at least four columns, *chr (chromosome) *pos (genomic position of CTSSs) *strand (genomic strand) *tagcount (raw CAGE tag count)
+# ARGUMENTS: ctss.df - data frame with one row per CTSS containing at least four columns, 
+# *chr (chromosome) 
+# *pos (genomic position of CTSSs) 
+# *strand (genomic strand) 
+# *tagcount (raw CAGE tag count)
 #            ctss.clusters - data frame with one row per cluster containing at least 6 columns, *cluster (cluster ID) *chr (chromosome) *start (start position of the cluster) *end (end position of the cluster) *strand (strand) *dominant_ctss (position of dominant peak)
 # RETURNS: integer vector of total tag count per cluster 
 
@@ -46,12 +58,15 @@ setGeneric( ".getTotalTagCount"
 
 setMethod( ".getTotalTagCount", "CTSS"
          , function(ctss, ctss.clusters) {
-	o <- findOverlaps(ctss.clusters, ctss)
+	
+  o <- findOverlaps(ctss.clusters, ctss)
 	totalCount <- tapply( decode(score(ctss)[subjectHits(o)])
-	                    , ctss.clusters$consensus.cluster[queryHits(o)]
+	                    , queryHits(o)
 	                    , sum)
+	
 	ctss.clusters$total <- 0
-	mcols(ctss.clusters)[as.numeric(names(totalCount)),"total"] <- totalCount
+	mcols(ctss.clusters)[as.numeric(names(totalCount)),"total"] <-  
+	                          totalCount
 	ctss.clusters$total
 })
 

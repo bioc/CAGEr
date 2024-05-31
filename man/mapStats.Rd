@@ -4,7 +4,7 @@
 \alias{mapStats}
 \title{Process mapping statistics}
 \usage{
-mapStats(libs, scope, group = "default", facet = NULL, normalise = TRUE)
+mapStats(libs, scope, group = "sampleLabels", facet = NULL, normalise = TRUE)
 }
 \arguments{
 \item{libs}{A data frame with containing columns required by the \code{scope}
@@ -15,7 +15,7 @@ and how it is normalised, or a function that implements a custom scope.
 See \code{\link[=mapStatsScopes]{mapStatsScopes()}} for details on each scope.}
 
 \item{group}{A vector of factors defining groups in the data.  By default,
-the \dQuote{group} column of the \dQuote{libs} table.}
+the sample labels (which means no grouping).}
 
 \item{facet}{A vector of factors defining facets in the data (in the sense
 of \code{ggplot2}'s \link[ggplot2:facet_wrap]{facet_wrap} function).}
@@ -39,7 +39,6 @@ help page for details on what the scopes are.
 See \url{http://stackoverflow.com/questions/10417003/stacked-barplot-with-errorbars-using-ggplot2} about stacked barplot.
 }
 \examples{
-library(SummarizedExperiment)
 CAGEr:::mapStats(as.data.frame(colData(exampleCAGEexp)), "counts", sampleLabels(exampleCAGEexp))
 CAGEr:::mapStats(as.data.frame(colData(exampleCAGEexp)), "counts", c("A", "A", "B", "B", "C"))
 

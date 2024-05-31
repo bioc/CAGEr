@@ -19,8 +19,8 @@
 #' @examples 
 #' CAGEr:::CAGEr_Multicore()
 #' CAGEr:::CAGEr_Multicore(TRUE,)
-#' CAGEr:::CAGEr_Multicore(TRUE, 3)
-#' CAGEr:::CAGEr_Multicore(FALSE, 3)
+#' CAGEr:::CAGEr_Multicore(TRUE,  2)
+#' CAGEr:::CAGEr_Multicore(FALSE, 2)
 #' 
 #' @importFrom BiocParallel bplapply
 #' @importFrom BiocParallel MulticoreParam

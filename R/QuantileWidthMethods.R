@@ -71,6 +71,8 @@ setMethod( "quantilePositions", "CAGEexp"
       },
       BPPARAM = CAGEr_Multicore(useMulticore, nrCores))
     ctss.clusters <- GRangesList(ctss.clusters)
+    # Keep metadata, it contains information on clustering method!
+    metadata(ctss.clusters) <- metadata(object)
     tagClustersGR(object) <- ctss.clusters
   } else if (clusters == "consensusClusters"){
     cons.clusters.l <- bplapply(sampleList(object), function(s) {
@@ -80,9 +82,17 @@ setMethod( "quantilePositions", "CAGEexp"
                       , q        = c(qLow, qUp))
       },
       BPPARAM = CAGEr_Multicore(useMulticore, nrCores))
-    for (qName in paste("q", c(qLow, qUp), sep = "_")) {
+    message("\t-> ", "all samples grouped")
+    qpos <- .get.quant.pos( cum.sums = object@metadata$CTSScumulativesConsensusClustersAll
+                            , clusters = rowRanges(consensusClustersSE(object))
+                            , q = c(qLow, qUp))
+    for (quantile in c(qLow, qUp)) {
+      # Each sample separately
+      qName <- paste("q", quantile, sep = "_")
       assays(consensusClustersSE(object), withDimnames=FALSE)[[qName]] <-
         DataFrame(lapply(cons.clusters.l, function(gr) mcols(gr)[,qName]))
+      # All samples pooled
+      mcols(rowRanges(consensusClustersSE(object)))[[qName]] <- mcols(qpos)[[qName]]
     }
   }
   object
@@ -112,14 +122,11 @@ setMethod( "quantilePositions", "CAGEexp"
 #' @rdname QuantileWidthFunctions
 
 .get.quant.pos <- function(cum.sums, clusters, q) {
-  # Vectorized function calculating one quantile position
-  # for each element of a list of cumulative sums.
-  getQuantilepos <- Vectorize(vectorize.args = "cum.sum", function(q, cum.sum) {
-    cum.sum <- decode(cum.sum) # A microbenchmark showed it it 3 times faster when applying decode() now
-    c.max <- tail(cum.sum,1) # Max is last element since x is a cumulative sums.
-    treshold <- c.max * q
-    which.max(cum.sum >= treshold)
-  })
+  # See benchmarks/quantile_position.Rmd in the source repository
+  getQuantilepos <- function(q, cum.sums) {
+    nl <- as(cum.sums, "NumericList")
+    min(which(nl >= max(nl) * q))
+  }
   # Calculate quantile positions for each quantile.
   cluster.q <- lapply(q, getQuantilepos, cum.sums)
   names(cluster.q) = paste('q_', q, sep = '')

@@ -177,6 +177,8 @@ exportToTrack( exampleCAGEexp, what = "consensusClusters")
 exampleCAGEexp |>
   consensusClustersGR("Zf.high", qLow = .1, qUp = .9) |>
   exportToTrack(qLow = .1, qUp = .9)
+exportToTrack( exampleCAGEexp, what = "consensusClusters"
+             , qLow = 0.1, qUp = 0.9, oneTrack = FALSE)
 
 }
 \author{

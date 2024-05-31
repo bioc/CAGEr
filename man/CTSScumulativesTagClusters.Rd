@@ -36,19 +36,18 @@ Accessor function.
 }
 \seealso{
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{consensusClustersDESeq2}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{paraclu}()},
 \code{\link{plotInterquantileWidth}()},
 \code{\link{quantilePositions}()},
 \code{\link{tagClustersGR}()}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSSnormalizedTpmDF}()},
 \code{\link{CTSStagCountDF}()},
@@ -57,8 +56,8 @@ Other CAGEr accessor methods:
 \code{\link{consensusClustersGR}()},
 \code{\link{expressionClasses}()},
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},
 \code{\link{sampleLabels}()},
 \code{\link{seqNameTotalsSE}()},

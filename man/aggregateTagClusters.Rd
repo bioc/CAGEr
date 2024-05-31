@@ -69,10 +69,10 @@ Aggregates tag clusters (TCs) across all CAGE datasets within
 the CAGEr object to create a referent set of consensus clusters.
 }
 \details{
-Since the tag clusters (TCs) returned by the \code{\link{clusterCTSS}}
+Since the tag clusters (TCs) returned by the CTSS clustering functions
 function are constructed separately for every CAGE sample within the CAGEr
 object, they can differ between samples in both their number, genomic
-coordinates, position of dominant TSS and #' overall signal.  To be able to
+coordinates, position of dominant TSS and overall signal.  To be able to
 compare all samples at the level of clusters of TSSs, TCs from all CAGE
 datasets are aggregated into a single set of consensus clusters.  First, TCs
 with signal \verb{>= tpmThreshold} from all CAGE datasets are selected, and their
@@ -87,18 +87,18 @@ of promoters that can be further used for expression profiling or detecting
 \examples{
 
 consensusClustersGR(exampleCAGEexp)
-aggregateTagClusters( exampleCAGEexp, tpmThreshold = 50
-                    , excludeSignalBelowThreshold = FALSE, maxDist = 100)
-consensusClustersGR(exampleCAGEexp)
+ce <- aggregateTagClusters( exampleCAGEexp, tpmThreshold = 50
+                          , excludeSignalBelowThreshold = FALSE, maxDist = 100)
+consensusClustersGR(ce)
 
-aggregateTagClusters( exampleCAGEexp, tpmThreshold = 50
-                    , excludeSignalBelowThreshold = TRUE, maxDist = 100)
-consensusClustersGR(exampleCAGEexp)
+ce <- aggregateTagClusters( exampleCAGEexp, tpmThreshold = 50
+                          , excludeSignalBelowThreshold = TRUE, maxDist = 100)
+consensusClustersGR(ce)
 
-aggregateTagClusters( exampleCAGEexp, tpmThreshold = 50
-                    , excludeSignalBelowThreshold = TRUE, maxDist = 100
-                    , qLow = 0.1, qUp = 0.9)
-consensusClustersGR(exampleCAGEexp)
+ce <- aggregateTagClusters( exampleCAGEexp, tpmThreshold = 50
+                          , excludeSignalBelowThreshold = TRUE, maxDist = 100
+                          , qLow = 0.1, qUp = 0.9)
+consensusClustersGR(ce)
 
 }
 \seealso{
@@ -106,21 +106,24 @@ Other CAGEr object modifiers:
 \code{\link{CTSStoGenes}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{annotateCTSS}()},
-\code{\link{clusterCTSS}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
 \code{\link{getCTSS}()},
 \code{\link{normalizeTagCount}()},
+\code{\link{paraclu}()},
 \code{\link{quantilePositions}()},
+\code{\link{quickEnhancers}()},
+\code{\link{resetCAGEexp}()},
 \code{\link{summariseChrExpr}()}
 
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{consensusClustersDESeq2}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{paraclu}()},
 \code{\link{plotInterquantileWidth}()},
 \code{\link{quantilePositions}()},
 \code{\link{tagClustersGR}()}

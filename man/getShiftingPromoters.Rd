@@ -7,6 +7,8 @@
 \usage{
 getShiftingPromoters(
   object,
+  groupX,
+  groupY,
   tpmThreshold = 0,
   scoreThreshold = -Inf,
   fdrThreshold = 1
@@ -14,6 +16,8 @@ getShiftingPromoters(
 
 \S4method{getShiftingPromoters}{CAGEexp}(
   object,
+  groupX,
+  groupY,
   tpmThreshold = 0,
   scoreThreshold = -Inf,
   fdrThreshold = 1
@@ -22,13 +26,17 @@ getShiftingPromoters(
 \arguments{
 \item{object}{A \code{\link{CAGEexp}} object.}
 
+\item{groupX, groupY}{Character vector of the one or more CAGE dataset labels in the first
+(\code{groupX}) and in the second group (\code{groupY}). Shifting promoters for the specified
+group pair are returned.}
+
 \item{tpmThreshold}{Consensus clusters with total CAGE signal \code{>= tpmThreshold}
 in each of the compared groups will be returned.}
 
 \item{scoreThreshold}{Consensus clusters with shifting score \code{>= scoreThreshold}
 will be returned. The default value \code{-Inf} returns all consensus clusters
 (for which score could be calculated, \emph{i.e.} the ones that have at least
-one tag in each of the comapred samples).}
+one tag in each of the compared samples).}
 
 \item{fdrThreshold}{Consensus clusters with adjusted P-value (FDR) from
 Kolmogorov-Smirnov test \code{>= fdrThreshold} will be returned. The default
@@ -49,8 +57,9 @@ samples, along with the value of the shifting score, P-value and FDR.  Scores an
 P-values/FDR have to be calculated beforehand by calling \code{\link{scoreShift}} function.
 }
 \examples{
-#head(getShiftingPromoters( exampleCAGEexp, tpmThreshold = 100
-#                         , scoreThreshold = 0.4, fdrThreshold = 0.01))
+getShiftingPromoters( exampleCAGEexp
+                    , groupX = "Zf.unfertilized.egg"
+                    , groupY = "Zf.30p.dome") |> head()
 
 }
 \seealso{
@@ -59,5 +68,7 @@ Other CAGEr promoter shift functions:
 }
 \author{
 Vanja Haberle
+
+Sarvesh Nikumbh
 }
 \concept{CAGEr promoter shift functions}

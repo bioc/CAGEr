@@ -8,21 +8,9 @@
 \alias{tagClustersGR<-,CAGEexp,missing,GRangesList-method}
 \title{Extract tag clusters (TCs) for individual CAGE experiments}
 \usage{
-tagClustersGR(
-  object,
-  sample = NULL,
-  returnInterquantileWidth = FALSE,
-  qLow = NULL,
-  qUp = NULL
-)
+tagClustersGR(object, sample = NULL, qLow = NULL, qUp = NULL)
 
-\S4method{tagClustersGR}{CAGEexp}(
-  object,
-  sample = NULL,
-  returnInterquantileWidth = FALSE,
-  qLow = NULL,
-  qUp = NULL
-)
+\S4method{tagClustersGR}{CAGEexp}(object, sample = NULL, qLow = NULL, qUp = NULL)
 
 tagClustersGR(object, sample = NULL) <- value
 
@@ -37,36 +25,33 @@ tagClustersGR(object, sample = NULL) <- value
 extract tag clusters. If \code{samples = NULL}, a list of all the clusters for
 each sample is returned.}
 
-\item{returnInterquantileWidth}{Return the interquantile width for each tag cluster.}
-
 \item{qLow, qUp}{Position of which quantile should be used as a left (lower)
 or right (upper) boundary (for \code{qLow} and \code{qUp} respectively) when
 calculating interquantile width.  Default value \code{NULL} results in using the
-start coordinate of the cluster.  Used only when
-\code{returnInterquantileWidth = TRUE}, otherwise ignored.}
+start coordinate of the cluster.}
 
 \item{value}{A \code{\link{TagClusters}} object.}
 }
 \value{
-Returns a \code{GRangesList} or a \code{GRanges} object with genomic coordinates,
+Returns a \code{GRangesList} or a \code{TagClusters} object with genomic coordinates,
 position of dominant TSS, total CAGE signal and additional information for
-all TCs from specified CAGE dataset (sample).  If
-\code{returnInterquantileWidth = TRUE}, interquantile width for each TC is also
-calculated using provided quantile positions.
+all TCs from specified CAGE dataset (sample).  If quantile information is
+provided, interquantile width for each TC is also calculated.  The
+\code{\link[S4Vectors:Annotated-class]{S4Vectors::metadata}} slot of the object contains a copy of the \code{CAGEexp}
+object's \emph{column data}.
 }
 \description{
-Extracts tag clusters (TCs) produced by \code{\link{clusterCTSS}} function
+Extracts tag clusters (TCs)
 for a specified CAGE experiment from a \code{\link{CAGEexp}} object.
 }
 \examples{
-tagClustersGR( exampleCAGEexp, "Zf.high", TRUE, 0.1, 0.9 )
-tagClustersGR( exampleCAGEexp, 1
-             , returnInterquantileWidth = TRUE, qLow = 0.1, qUp = 0.9 )
+tagClustersGR( exampleCAGEexp, "Zf.high", 0.1, 0.9 )
+tagClustersGR( exampleCAGEexp, 1, qLow = 0.1, qUp = 0.9 )
+tagClustersGR( exampleCAGEexp )@metadata$colData
 
 }
 \seealso{
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},
@@ -76,21 +61,21 @@ Other CAGEr accessor methods:
 \code{\link{consensusClustersGR}()},
 \code{\link{expressionClasses}()},
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},
 \code{\link{sampleLabels}()},
 \code{\link{seqNameTotalsSE}()}
 
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{consensusClustersDESeq2}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{paraclu}()},
 \code{\link{plotInterquantileWidth}()},
 \code{\link{quantilePositions}()}
 }

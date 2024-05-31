@@ -7,21 +7,9 @@
 \alias{consensusClustersSE,CAGEexp-method}
 \title{Get consensus clusters from CAGEr objects}
 \usage{
-consensusClustersGR(
-  object,
-  sample = NULL,
-  returnInterquantileWidth = FALSE,
-  qLow = NULL,
-  qUp = NULL
-)
+consensusClustersGR(object, sample = NULL, qLow = NULL, qUp = NULL)
 
-\S4method{consensusClustersGR}{CAGEexp}(
-  object,
-  sample = NULL,
-  returnInterquantileWidth = FALSE,
-  qLow = NULL,
-  qUp = NULL
-)
+\S4method{consensusClustersGR}{CAGEexp}(object, sample = NULL, qLow = NULL, qUp = NULL)
 
 consensusClustersSE(object)
 
@@ -33,14 +21,7 @@ consensusClustersSE(object)
 \item{sample}{Optional. Label of the CAGE dataset (experiment, sample) for
 which to extract sample-specific information on consensus clusters.}
 
-\item{returnInterquantileWidth}{Should the interquantile width of consensus
-clusters in specified sample be returned.  Used only when \code{sample}
-argument is specified, otherwise ignored.}
-
-\item{qLow, qUp}{Position of which quantile should be used as a left (lower)
-or right (upper) boundary when calculating interquantile width.  Used
-only when \code{sample} argument is specified and
-\code{returnInterquantileWidth = TRUE}, otherwise ignored.}
+\item{qLow, qUp}{Lower and upper quantiles to compute interquantile width.}
 }
 \value{
 \code{consensusClustersGR} returns a \code{\link{ConsensusClusters}} object, which
@@ -51,9 +32,10 @@ be removed in the future.  When \code{sample} argument is
 NOT specified, total CAGE signal across all CAGE datasets (samples) is
 returned in the \code{tpm} column.  When \code{sample} argument is specified, the \code{tpm}
 column contains CAGE signal of consensus clusters in that specific sample.
-When \code{returnInterquantileWidth = TRUE}, additional sample-specific information
-is returned, including position of the dominant TSS, and interquantile width
-of the consensus clusters in the specified sample.
+In addition, sample-specific information  is returned, including position of
+the dominant TSS, and (if applicable) interquantile width of the consensus
+clusters in the specified sample or otherwise, sample-agnostic information is
+returned.
 
 \code{consensusClustersSE} returns the \code{\link{SummarizedExperiment}} stored
 in the \code{consensusClusters} experiment slot of the CAGEexp object.
@@ -64,7 +46,6 @@ object.
 }
 \examples{
 consensusClustersGR( exampleCAGEexp, sample = 2
-                   , returnInterquantileWidth = TRUE
                    , qLow = 0.1, qUp = 0.9)
 
 }
@@ -72,7 +53,6 @@ consensusClustersGR( exampleCAGEexp, sample = 2
 \code{\link[=consensusClusters<-]{consensusClusters<-()}}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},
@@ -81,21 +61,21 @@ Other CAGEr accessor methods:
 \code{\link{GeneExpSE}()},
 \code{\link{expressionClasses}()},
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},
 \code{\link{sampleLabels}()},
 \code{\link{seqNameTotalsSE}()},
 \code{\link{tagClustersGR}()}
 
 Other CAGEr clusters functions: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{consensusClustersDESeq2}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
+\code{\link{paraclu}()},
 \code{\link{plotInterquantileWidth}()},
 \code{\link{quantilePositions}()},
 \code{\link{tagClustersGR}()}

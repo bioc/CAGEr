@@ -134,10 +134,13 @@ Other CAGEr object modifiers:
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
 \code{\link{annotateCTSS}()},
-\code{\link{clusterCTSS}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
 \code{\link{normalizeTagCount}()},
+\code{\link{paraclu}()},
 \code{\link{quantilePositions}()},
+\code{\link{quickEnhancers}()},
+\code{\link{resetCAGEexp}()},
 \code{\link{summariseChrExpr}()}
 }
 \author{

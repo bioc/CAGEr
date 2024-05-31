@@ -33,7 +33,6 @@ Other CAGEr gene expression analysis functions:
 \code{\link{ranges2genes}()}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},
@@ -42,8 +41,8 @@ Other CAGEr accessor methods:
 \code{\link{consensusClustersGR}()},
 \code{\link{expressionClasses}()},
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},
 \code{\link{sampleLabels}()},
 \code{\link{seqNameTotalsSE}()},

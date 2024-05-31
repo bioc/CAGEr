@@ -3,23 +3,35 @@
 \name{annotateCTSS}
 \alias{annotateCTSS}
 \alias{annotateCTSS,CAGEexp,GRanges-method}
+\alias{annotateTagClusters}
+\alias{annotateTagClusters,CAGEexp,GRanges-method}
 \alias{annotateConsensusClusters}
 \alias{annotateConsensusClusters,CAGEexp,GRanges-method}
 \title{Annotate and compute summary statistics}
 \usage{
-annotateCTSS(object, ranges)
+annotateCTSS(object, ranges, upstream = 500, downstream = 500)
 
-\S4method{annotateCTSS}{CAGEexp,GRanges}(object, ranges)
+\S4method{annotateCTSS}{CAGEexp,GRanges}(object, ranges, upstream = 500, downstream = 500)
 
-annotateConsensusClusters(object, ranges)
+annotateTagClusters(object, ranges, upstream = 500, downstream = 500)
 
-\S4method{annotateConsensusClusters}{CAGEexp,GRanges}(object, ranges)
+\S4method{annotateTagClusters}{CAGEexp,GRanges}(object, ranges, upstream = 500, downstream = 500)
+
+annotateConsensusClusters(object, ranges, upstream = 500, downstream = 500)
+
+\S4method{annotateConsensusClusters}{CAGEexp,GRanges}(object, ranges, upstream = 500, downstream = 500)
 }
 \arguments{
 \item{object}{\code{CAGEexp} object.}
 
 \item{ranges}{A \code{\link{GRanges}} object, optionally containing \code{gene_name},
 \code{type} and \code{transcript_type} metadata.}
+
+\item{upstream}{Number of bases \emph{upstream} the start of the transcript models
+to be considered as part of the \emph{promoter region}.}
+
+\item{downstream}{Number of bases \emph{downstream} the start of the transcript
+models to be considered as part of the \emph{promoter region}.}
 }
 \value{
 \code{annotateCTSS} returns the input object with the following
@@ -36,20 +48,25 @@ a \code{genes} column is added to indicate the number of different gene symbols
 detected.
 }
 
+\code{annotateTagClusters} returns the input object with the same
+modifications as above.
+
 \code{annotateConsensusClusters} returns the input object with the same
 modifications as above.
 }
 \description{
-\code{annotateCTSS} annotates the \emph{CTSS} of a \code{\link{CAGEexp}} object and
-computes annotation statistics.
+\code{annotateCTSS} annotates the \emph{CTSS} of a \code{\link{CAGEexp}} object and computes
+annotation statistics.
 
 \code{annotateConsensusClusters} annotates the \emph{consensus clusters}
 of a CAGEr object.
 }
 \examples{
-library(SummarizedExperiment)
 annotateCTSS(exampleCAGEexp, exampleZv9_annot)
 colData(exampleCAGEexp)
+
+exampleCAGEexp <- annotateTagClusters(exampleCAGEexp, exampleZv9_annot)
+tagClustersGR(exampleCAGEexp, 1)
 
 annotateConsensusClusters(exampleCAGEexp, exampleZv9_annot)
 consensusClustersGR(exampleCAGEexp)
@@ -62,11 +79,14 @@ Other CAGEr object modifiers:
 \code{\link{CTSStoGenes}()},
 \code{\link{CustomConsensusClusters}()},
 \code{\link{aggregateTagClusters}()},
-\code{\link{clusterCTSS}()},
 \code{\link{cumulativeCTSSdistribution}()},
+\code{\link{distclu}()},
 \code{\link{getCTSS}()},
 \code{\link{normalizeTagCount}()},
+\code{\link{paraclu}()},
 \code{\link{quantilePositions}()},
+\code{\link{quickEnhancers}()},
+\code{\link{resetCAGEexp}()},
 \code{\link{summariseChrExpr}()}
 
 Other CAGEr annotation functions: 

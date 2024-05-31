@@ -1,34 +1,40 @@
-#' @include AllClasses.R CAGEexp.R
+#' @include CAGEexp.R
+NULL
 
-#' @name plotAnnot
-#'
-#' @title Plot annotation statistics
+#' Plot annotation statistics
 #' 
-#' @description Plot maping statistics of an object containing mapping statistics in
-#' counts as percentages in stacked barplots.
+#' Extracts processing and alignment statistics from a _CAGEr_ object and plots
+#' them as counts or percentages in stacked barplots.
+#' 
+#' When given a [`CAGEexp`] object or its _column data_, what will be counted is
+#' the number of _CAGE tags_.  When given cluster objects ([`CTSS`],
+#' [`TagClusters`] or [`ConsensusClusters`]) wrapped as
+#' a [`GenomicRanges::GRangesList`], what will be counted is the number of
+#' _clusters_.
 #' 
 #' @param x An object from which can be extracted a table with columns named
 #'        `promoter`, `exon`, `intron`, `mapped`, `extracted`, `rdna`, and
-#'        `tagdust`, that will be passed to the `mapStats` function.
-#' @param scope The name of a \dQuote{scope}, that defines which data is plotted
+#'        `tagdust`, that will be passed to the [`mapStats`] function.
+#' @param scope The name of a _scope_, that defines which data is plotted
 #'        and how it is normalised, or a function implementing that scope.
-#'        See [mapStatsScopes()] for details on each scope.
+#'        See [`mapStatsScopes`] for details on each scope.
 #' @param title The title of the plot.
 #' @param group A factor to group the samples, or the name of a `colData`
 #'        column of a `CAGEexp` object, or a formula giving the names of columns
-#'        to be pasted together.
+#'        to be pasted together.  If no group is provided the sample labels will
+#'        be used.
 #' @param facet A factor or the name of a `colData` column of a
 #'        `CAGEexp` object, to facet the samples in the sense of
-#'        `ggplot2`'s [facet_wrap][ggplot2::facet_wrap()] function.
-#' @param normalise Whether to normalise or not. Default: TRUE.
+#'        `ggplot2`'s [`ggplot2::facet_wrap()`] function.
+#' @param normalise Whether to normalise or not. Default: `TRUE`.
 #' 
-#' @return Returns invisibly a `ggplot2` object of class `c("gg", "ggplot")`.
+#' @return Returns a [`ggplot2::ggplot`] object.
 #' 
 #' @details Stacked barplots with error bars inspired from
 #' <http://stackoverflow.com/questions/10417003/stacked-barplot-with-errorbars-using-ggplot2>.
 #' See <http://www.biomedcentral.com/1471-2164/14/665/figure/F1> for example.
 #' 
-#' @seealso [mapStats()] for a list of _scopes_.
+#' @seealso [`mapStats`] for a list of _scopes_.
 #' @family CAGEr annotation functions
 #' @family CAGEr plot functions
 #' 
@@ -52,7 +58,7 @@
 #' @export
 
 setGeneric("plotAnnot", function( x, scope, title
-                                , group = "default", facet = NULL
+                                , group = "sampleLabels", facet = NULL
                                 , normalise = TRUE)
   standardGeneric("plotAnnot"))
 
@@ -120,6 +126,34 @@ setMethod("plotAnnot", "CAGEexp",
            , group = group, facet = facet, normalise = normalise)
 })
 
+.GRangesList_factor_to_dframe <- function(x, factor, group = NULL) {
+  df <- lapply(x, .GRanges_factor_to_dframe, factor = factor) |> do.call(what = rbind)
+  df$sampleLabels <- rownames(df)
+  df$librarySizes <- sapply(x, length)
+  df$group <- group
+  if(is.null(group)) df$group <- df$sampleLabels
+  rownames(df) <- NULL
+  df
+}
+
+.GRanges_factor_to_dframe <- function(x, factor) {
+  if(is.null(mcols(x)[factor])) stop("Object misses the ", factor, " metadata column.")
+  mcols(x)[factor] |> table() |> rbind() |> as.data.frame()
+}
+
+#' @rdname plotAnnot
+
+setMethod("plotAnnot", "GRangesList",
+  function( x, scope, title, group, facet, normalise) {
+  if (! is.null(x@metadata$colData)) {
+    group <- x@metadata$colData[[group]]
+  }
+  df <- .GRangesList_factor_to_dframe(x, "annotation", group)
+  plotAnnot( df
+           , scope = scope, title = title
+           , group = group, facet = facet, normalise = normalise)
+})
+
 #' @name mapStats
 #' 
 #' @title Process mapping statistics
@@ -133,7 +167,7 @@ setMethod("plotAnnot", "CAGEexp",
 #'        and how it is normalised, or a function that implements a custom scope.
 #'        See [mapStatsScopes()] for details on each scope.
 #' @param group A vector of factors defining groups in the data.  By default,
-#'        the \dQuote{group} column of the \dQuote{libs} table.
+#'        the sample labels (which means no grouping).
 #' @param facet A vector of factors defining facets in the data (in the sense
 #'        of `ggplot2`'s [facet_wrap][ggplot2::facet_wrap()] function).
 #' @param normalise Whether to normalise or not. Default: `TRUE`.
@@ -153,7 +187,6 @@ setMethod("plotAnnot", "CAGEexp",
 #' @seealso [plotAnnot], [mapStatsScopes]
 #' 
 #' @examples
-#' library(SummarizedExperiment)
 #' CAGEr:::mapStats(as.data.frame(colData(exampleCAGEexp)), "counts", sampleLabels(exampleCAGEexp))
 #' CAGEr:::mapStats(as.data.frame(colData(exampleCAGEexp)), "counts", c("A", "A", "B", "B", "C"))
 #' 
@@ -163,18 +196,11 @@ setMethod("plotAnnot", "CAGEexp",
 
 mapStats <- function( libs
                     , scope
-                    , group="default"
+                    , group="sampleLabels"
                     , facet = NULL
                     , normalise = TRUE) {
   
-  if (identical(group, "default")) {
-      if        ("group" %in% colnames(libs)) {
-        group <- libs$group
-      } else if ("Group" %in% colnames(libs)) {
-        group <- libs$Group
-    } else
-      stop(paste("Missing", dQuote("group"), "column in the data frame."))
-  }
+  if (is.null(libs$sampleLabels)) stop(paste("Missing", dQuote("sampleLabels"), "column in the data frame."))
   
   # Backup levels for later.  Coerce to factor if it was not.  This way,
   # numerical ordering is preserved despite the conversion to characters
@@ -375,17 +401,21 @@ msScope_annotation <- function(libs) {
 }
 
 
-#' @name annotateCTSS
+#' Annotate and compute summary statistics
 #' 
-#' @title Annotate and compute summary statistics
-#' 
-#' @description `annotateCTSS` annotates the _CTSS_ of a [`CAGEexp`] object and
-#' computes annotation statistics.
+#' `annotateCTSS` annotates the _CTSS_ of a [`CAGEexp`] object and computes
+#' annotation statistics.
 #' 
 #' @param object `CAGEexp` object.
 #'   
 #' @param ranges A [`GRanges`] object, optionally containing `gene_name`,
 #'   `type` and `transcript_type` metadata.
+#' 
+#' @param upstream Number of bases _upstream_ the start of the transcript models
+#'        to be considered as part of the _promoter region_.
+#'        
+#' @param downstream Number of bases _downstream_ the start of the transcript
+#'        models to be considered as part of the _promoter region_.
 #'   
 #' @return `annotateCTSS` returns the input object with the following
 #'   modifications:
@@ -407,19 +437,19 @@ msScope_annotation <- function(libs) {
 #' @author Charles Plessy
 #' 
 #' @examples 
-#' library(SummarizedExperiment)
 #' annotateCTSS(exampleCAGEexp, exampleZv9_annot)
 #' colData(exampleCAGEexp)
 #' 
 #' @export
 
-setGeneric("annotateCTSS", function(object, ranges) standardGeneric("annotateCTSS"))
+setGeneric("annotateCTSS", function(object, ranges, upstream=500, downstream=500)
+  standardGeneric("annotateCTSS"))
 
 #' @rdname annotateCTSS
 
-setMethod("annotateCTSS", c("CAGEexp", "GRanges"), function (object, ranges){
+setMethod("annotateCTSS", c("CAGEexp", "GRanges"), function (object, ranges, upstream=500, downstream=500){
   CTSScoordinatesGR(object)$genes      <- ranges2genes(CTSScoordinatesGR(object), ranges)
-  CTSScoordinatesGR(object)$annotation <- ranges2annot(CTSScoordinatesGR(object), ranges)
+  CTSScoordinatesGR(object)$annotation <- ranges2annot(CTSScoordinatesGR(object), ranges, upstream, downstream)
   
   annot <- sapply( CTSStagCountDF(object)
                  , function(X) tapply(X, CTSScoordinatesGR(object)$annotation, sum))
@@ -441,7 +471,36 @@ setMethod("annotateCTSS", c("CAGEexp", "TxDb"), function (object, ranges){
   annot <- sapply( CTSStagCountDF(object)
                    , function(X) tapply(X, CTSScoordinatesGR(object)$annotation, sum))
   colData(object)[levels(CTSScoordinatesGR(object)$annotation)] <- DataFrame(t(annot))
-  
+  validObject(object)
+  object
+})
+
+#' `annotateTagClusters` annotates the _tag clusters_ of a _CAGEr_ object.
+#'   
+#' @return `annotateTagClusters` returns the input object with the same
+#' modifications as above.
+#' 
+#' @examples 
+#' exampleCAGEexp <- annotateTagClusters(exampleCAGEexp, exampleZv9_annot)
+#' tagClustersGR(exampleCAGEexp, 1)
+#' 
+#' @export
+#' @rdname annotateCTSS
+
+setGeneric("annotateTagClusters", function(object, ranges, upstream=500, downstream=500)
+  standardGeneric("annotateTagClusters"))
+
+#' @rdname annotateCTSS
+
+setMethod("annotateTagClusters", c("CAGEexp", "GRanges"), function (object, ranges, upstream=500, downstream=500){
+  if(is.null(experiments(object)$tagCountMatrix))
+    stop("Input does not contain CTSS expressiond data, see ", dQuote("getCTSS()"), ".")
+  tagClustersGR(object) <- endoapply(tagClustersGR(object), function (gr) {
+    gr$annotation <- ranges2annot(gr, ranges, upstream, downstream) 
+    if(!is.null(ranges$gene_name))
+      gr$genes    <- ranges2genes(gr, ranges)
+    gr
+    })
   validObject(object)
   object
 })
@@ -463,14 +522,15 @@ setMethod("annotateCTSS", c("CAGEexp", "TxDb"), function (object, ranges){
 #' 
 #' @export
 
-setGeneric("annotateConsensusClusters", function(object, ranges) standardGeneric("annotateConsensusClusters"))
+setGeneric("annotateConsensusClusters", function(object, ranges, upstream=500, downstream=500)
+  standardGeneric("annotateConsensusClusters"))
 
 #' @rdname annotateCTSS
 
-setMethod("annotateConsensusClusters", c("CAGEexp", "GRanges"), function (object, ranges){
+setMethod("annotateConsensusClusters", c("CAGEexp", "GRanges"), function (object, ranges, upstream=500, downstream=500){
   if(is.null(experiments(object)$tagCountMatrix))
     stop("Input does not contain CTSS expressiond data, see ", dQuote("getCTSS()"), ".")
-  consensusClustersGR(object)$annotation <- ranges2annot(consensusClustersGR(object), ranges)
+  consensusClustersGR(object)$annotation <- ranges2annot(consensusClustersGR(object), ranges, upstream, downstream)
   if(!is.null(ranges$gene_name))
     consensusClustersGR(object)$genes    <- ranges2genes(consensusClustersGR(object), ranges)
   validObject(object)
@@ -478,23 +538,27 @@ setMethod("annotateConsensusClusters", c("CAGEexp", "GRanges"), function (object
 })
 
 
-#' @name ranges2annot
+#' Hierarchical annotation of genomic regions.
 #' 
-#' @title Hierarchical annotation of CTSSes
+#' Assigns region types such as `promoter`, `exon` or `unknown` to genomic
+#' regions such as _CTSS_, _tag clusters_, or _consensus clusters_.
 #' 
-#' @description Assigns region types such as `promoter`, `exon` or `unknown`
-#'              to CTSSes.
-#' 
-#' @param ranges A [`CTSS`] object, for example extracted from a
-#'        `RangedSummarizedExperiment` object with the [`rowRanges`]
+#' @param ranges A [`GenomicRanges::GRanges`] object, for example extracted from
+#'        a `RangedSummarizedExperiment` object with the [`rowRanges`]
 #'        command.
 #' 
-#' @param annot A [`GRanges`] from which promoter positions will be inferred.
+#' @param annot A `GRanges` from which promoter positions will be inferred.
 #'        Typically GENCODE.  If the `type` metadata is present, it should
 #'        contain `gene`, `exon` and `transcript` among its values.  Otherwise,
 #'        all entries are considered transcripts. If the `transcript_type`
 #'        metadata is available, the entries that may not be primary products
 #'        (for instance \sQuote{snoRNA}) are discarded.
+#' 
+#' @param upstream Number of bases _upstream_ the start of the transcript models
+#'        to be considered as part of the _promoter region_.
+#'        
+#' @param downstream Number of bases _downstream_ the start of the transcript
+#'        models to be considered as part of the _promoter region_.
 #' 
 #' @return A Run-length-encoded ([`Rle`]) factor of same length as the `CTSS`
 #'         object, indicating if the interval is `promoter`, `exon`, `intron` or
@@ -527,12 +591,12 @@ setMethod("annotateConsensusClusters", c("CAGEexp", "GRanges"), function (object
 #' gr2 <- gr1
 #' gr2$type            <- c("transcript",     "exon",           "transcript")
 #' gr2$transcript_type <- c("protein_coding", "protein_coding", "miRNA")
-#' CAGEr:::ranges2annot(ctss, gr2)
+#' CAGEr:::ranges2annot(ctss, gr2, up=500, down=20)
 #' 
 #' @importFrom GenomicRanges findOverlaps promoters
 #' @importFrom S4Vectors Rle
 
-ranges2annot <- function(ranges, annot) {
+ranges2annot <- function(ranges, annot, upstream=500, downstream=500) {
   typesWithPromoter <- c( "protein_coding", "processed_transcript", "lincRNA"
                         , "antisense", "processed_pseudogene"
                         , "unprocessed_pseudogene")
@@ -547,7 +611,7 @@ ranges2annot <- function(ranges, annot) {
   
   if(!is.null(annot$type)) {
     classes <- c("promoter", "exon", "intron", "unknown")
-    p <- findOverlapsBool(ranges, promoters(annot[annot$type == "transcript"], 500, 500))
+    p <- findOverlapsBool(ranges, promoters(annot[annot$type == "transcript"], upstream, downstream))
     e <- findOverlapsBool(ranges, annot[annot$type == "exon"])
     t <- findOverlapsBool(ranges, annot[annot$type == "transcript"])
     annot <- sapply( 1:length(ranges), function(i) {
@@ -558,7 +622,7 @@ ranges2annot <- function(ranges, annot) {
     })
   } else {
     classes <- c("promoter", "gene", "unknown")
-    p <- findOverlapsBool(ranges, promoters(annot, 500, 500))
+    p <- findOverlapsBool(ranges, promoters(annot, upstream, downstream))
     g <- findOverlapsBool(ranges, annot)
     annot <- sapply( 1:length(ranges), function(i) {
       if      (p[i]) {classes[1]}
@@ -604,18 +668,18 @@ txdb2annot <- function(ranges, annot) {
 #' Assign gene symbol(s) to Genomic Ranges.
 #' 
 #' This private (non-exported) function is used to assign gene symbols
-#' to genomic ranges.  It is run by \code{\link{annotateCTSS}}, which has to
-#' be run before \code{\link{CTSStoGenes}}.
+#' to genomic ranges.  It is run by [`annotateCTSS`], which has to
+#' be run before [`CTSStoGenes`].
 #' 
-#' @param ranges Genomics Ranges object, for example extracted from a
-#'               RangedSummarizedExperiment object with the \code{rowRanges}
-#'               command.
+#' @param ranges [`GenomicRanges::GRanges`] object, for example extracted from
+#'        a [`SummarizedExperiment::RangedSummarizedExperiment`] object with the
+#'        [`SummarizedExperiment::rowRanges`] command.
 #' 
-#' @param genes A \code{\link{GRanges}} object containing \code{gene_name} metadata.
+#' @param genes A _GRanges_ object containing `gene_name` metadata.
 #' 
-#' @return A \code{\link{Rle}} character vector of same length as the GRanges object,
+#' @return A [`S4Vectors::Rle`] factor of same length as the _GRanges_ object,
 #' indicating one gene symbol or a semicolon-separated list of gene symbols for each
-#' range.
+#' range.  The levels are alphabetically sorted.
 #'         
 #' @family CAGEr annotation functions
 #' @family CAGEr gene expression analysis functions
@@ -634,7 +698,8 @@ ranges2genes <- function(ranges, genes) {
   if (is.null(genes$gene_name))
     stop("Annotation must contain ", dQuote("gene_name"), " metdata.")
   names(genes) <- genes$gene_name
-  ranges2names(ranges, genes)
+  g <- ranges2names(ranges, genes) |> as.character()
+  Rle(factor(g, levels = sort(unique(g))))
 }
 
 
@@ -646,12 +711,13 @@ ranges2genes <- function(ranges, genes) {
 #' for each element of the first object returns the name of the elements of
 #' the second object that it intersects with.
 #' 
-#' @param rangesA A \code{\link{GRanges}} object.
-#' @param rangesB A second GRanges object.
+#' @param rangesA A [`GenomicRanges::GRanges`] object.
+#' @param rangesB A second `GRanges` object.
 #' 
-#' @return A \code{\link{Rle}} character vector of same length as the \code{rangesA}
-#' GRanges object, indicating one name or a semicolon-separated list of names from
-#' the each \code{rangesB} object.
+#' @return A \code{\link{Rle}} factor of same length as the `rangesA` _GRanges_
+#' object, indicating one name or a semicolon-separated list of names from
+#' the each `rangesB` object.  The levels are in order of appearance to
+#' to maintain genomic coordinate sort order when the names are cluster names.
 #'         
 #' @family CAGEr annotation functions
 #' 
@@ -667,12 +733,13 @@ ranges2genes <- function(ranges, genes) {
 
 ranges2names <- function(rangesA, rangesB) {
   if (is.null(names(rangesB)))
-    stop(sQuote("rangesB"), " must contain have names.")
+    stop(sQuote("rangesB"), " must have names.")
   names <- findOverlaps(rangesA, rangesB)
   names <- as(names, "List")
   names <- extractList(names(rangesB), names)
   names <- unique(names)
   names <- unstrsplit(names, ";")
+  names <- factor(names, levels = unique(names))
   Rle(names)
 }
 

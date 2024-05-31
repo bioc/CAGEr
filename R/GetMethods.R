@@ -1,4 +1,4 @@
-#' @include AggregationFunctions.R ClusteringFunctions.R CAGEr.R CTSS.R
+#' @include ClusteringFunctions.R CAGEr.R CTSS.R
 
 ################################################################
 # Functions for retrieving data from CAGEexp objects
@@ -43,7 +43,7 @@ setMethod("genomeName", "CTSS", function (object) metadata(object)$genomeName)
 #' @title Extracting paths to input files from CAGEr objects
 #' 
 #' @description Extracts the paths to CAGE data input files from
-#' code{\link{CAGEexp}} objects.
+#' \code{\link{CAGEexp}} objects.
 #' 
 #' @param object A CAGEexp object.
 #' 
@@ -89,36 +89,30 @@ function (object){
 #' @details The following input file types are supported:
 #' 
 #' \itemize{
-#'   \item{\code{bam}:}
-#'   {A single-ended BAM file.}
+#'   \item{\code{bam}: A single-ended BAM file.}
 #' 
-#'   \item{\code{bamPairedEnd}:}
-#'   {A paired-ended BAM file.}
+#'   \item{\code{bamPairedEnd}: A paired-ended BAM file.}
 #' 
-#'   \item{\code{bed}:}
-#'   {A BED file where each line counts for one molecule.}
+#'   \item{\code{bed}: A BED file where each line counts for one molecule.}
 #' 
-#'   \item{\code{bedScore}:}
-#'   {A BED file where the score indicates a number of counts for a
-#'   given alignment}
+#'   \item{\code{bedScore}: A BED file where the score indicates a number of
+#'   counts for a given alignment.}
 #' 
-#'   \item{\code{CAGEscanMolecule}:}
-#'   {Experimental.  For the CAGEscan 3.0 pipeline.}
+#'   \item{\code{CAGEscanMolecule}: Experimental.  For the CAGEscan 3.0 pipeline.}
 #' 
-#'   \item{\code{ctss}:}
-#'   {A tabulation-delimited file describing CAGE Transcription
+#'   \item{\code{ctss}: A tabulation-delimited file describing CAGE Transcription
 #'   Start Sites (CTSS) with four columns indicating \emph{chromosome},
 #'   \emph{1-based coordinate}, \emph{strand} and \emph{score} respectively.}
 #' 
-#'   \item{\code{CTSStable}}{}
+#'   \item{\code{CTSStable}}
 #' 
-#'   \item{\code{FANTOM5}}{}
+#'   \item{\code{FANTOM5}}
 #' 
-#'   \item {\code{ENCODE}}{}
+#'   \item {\code{ENCODE}}
 #' 
-#'   \item{\code{FANTOM3and4}}{}
+#'   \item{\code{FANTOM3and4}}
 #' 
-#'   \item{\code{ZebrafishDevelopment}}{}
+#'   \item{\code{ZebrafishDevelopment}}
 #' }
 #' 
 #' @author Vanja Haberle
@@ -208,10 +202,7 @@ function (object){
 #' 
 #' @return `CTSScoordinatesGR` returns the coordinates as a [CTSS()] object
 #' wrapping genomic ranges.  A `filteredCTSSidx` column metadata will be present
-#' if [clusterCTSS()] was ran earlier.
-#' 
-#' @seealso [`clusterCTSS`]
-#' 
+#' if [`filterLowExpCTSS`] was ran earlier. 
 #' 
 #' @importFrom GenomeInfoDb genome genome<-
 #' @importFrom IRanges IRanges
@@ -245,7 +236,6 @@ setMethod("CTSScoordinatesGR", "CAGEexp", function (object)
 #' function being called:
 #' 
 #' * `CTSStagCountDF`: A [`DataFrame`] of [`Rle`] integers.
-#' * `CTSStagCountDA`: A [`DelayedArray`] wrapping a `DataFrame` of `Rle` integers.
 #' * `CTSStagCountSE`: A [`RangedSummarizedExperiment`]` containing a `DataFrame`
 #'    of `Rle` integers.
 #' * `CTSStagCountGR`: A `CTSS` object (wrapping `GRanges`) containing a `score`
@@ -271,24 +261,6 @@ setGeneric("CTSStagCountDF", function(object) standardGeneric("CTSStagCountDF"))
 
 setMethod("CTSStagCountDF", "CAGEexp", function (object)
   assay(CTSStagCountSE(object)))
-
-
-#' @name CTSStagCountDA
-#' @rdname CTSStagCount
-#' 
-#' @examples 
-#' CTSStagCountDA(exampleCAGEexp)
-#' 
-#' @import DelayedArray DelayedArray
-#' @export
-
-setGeneric("CTSStagCountDA", function(object) tandardGeneric("CTSStagCountDA"))
-
-#' @rdname CTSStagCount
-
-setMethod("CTSStagCountDA", signature(object = "CAGEr"), function (object)
-  DelayedArray(CTSStagCountDF(object)))
-
 
 #' @name CTSStagCountGR
 #' @rdname CTSStagCount
@@ -409,46 +381,12 @@ setMethod( "CTSSnormalizedTpmGR", "CAGEexp", function (object, samples) {
   gr
 })
 
-#' @name CTSSclusteringMethod
-#' 
-#' @title Get /set CTSS clustering method
-#' 
-#' @description Returns or sets the name of the method that was used make tag
-#' clusters from the CTSSs of a \code{\link{CAGEr}} object.
-#' 
-#' @param object A CAGEr object.
-#' 
-#' @seealso \code{\link{clusterCTSS}}
-#' @family CAGEr accessor methods
-#' @family CAGEr clusters functions
-#' 
-#' @author Vanja Haberle
-#' @author Charles Plessy
-#' 
-#' @examples 
-#' CTSSclusteringMethod(exampleCAGEexp)
-#' 
-#' @export CTSSclusteringMethod
-
-setGeneric("CTSSclusteringMethod", function(object) standardGeneric("CTSSclusteringMethod"))
-
-#' @rdname CTSSclusteringMethod
-
-setMethod("CTSSclusteringMethod", "GRangesList", function (object)
-	metadata(object)$clusteringMethod)
-
-#' @rdname CTSSclusteringMethod
-
-setMethod("CTSSclusteringMethod", "CAGEexp", function (object)
-  CTSSclusteringMethod(metadata(object)$tagClusters))
-
-
 #' @name tagClustersGR
 #' @rdname tagClusters
 #' 
 #' @title Extract tag clusters (TCs) for individual CAGE experiments
 #' 
-#' @description Extracts tag clusters (TCs) produced by [`clusterCTSS`] function
+#' @description Extracts tag clusters (TCs)
 #' for a specified CAGE experiment from a [`CAGEexp`] object.
 #' 
 #' @param object A `CAGEexp` object.
@@ -457,19 +395,17 @@ setMethod("CTSSclusteringMethod", "CAGEexp", function (object)
 #' extract tag clusters. If `samples = NULL`, a list of all the clusters for
 #' each sample is returned.
 #' 
-#' @param returnInterquantileWidth Return the interquantile width for each tag cluster.
-#' 
 #' @param qLow,qUp Position of which quantile should be used as a left (lower)
 #' or right (upper) boundary (for `qLow` and `qUp` respectively) when
 #' calculating interquantile width.  Default value `NULL` results in using the
-#' start coordinate of the cluster.  Used only when
-#' `returnInterquantileWidth = TRUE`, otherwise ignored.
+#' start coordinate of the cluster.
 #' 
-#' @return Returns a `GRangesList` or a `GRanges` object with genomic coordinates,
+#' @return Returns a `GRangesList` or a `TagClusters` object with genomic coordinates,
 #' position of dominant TSS, total CAGE signal and additional information for
-#' all TCs from specified CAGE dataset (sample).  If
-#' `returnInterquantileWidth = TRUE`, interquantile width for each TC is also
-#' calculated using provided quantile positions.
+#' all TCs from specified CAGE dataset (sample).  If quantile information is
+#' provided, interquantile width for each TC is also calculated.  The
+#' [`S4Vectors::metadata`] slot of the object contains a copy of the `CAGEexp`
+#' object's _column data_.
 #' 
 #' @author Vanja Haberle
 #' @author Charles Plessy
@@ -479,23 +415,21 @@ setMethod("CTSSclusteringMethod", "CAGEexp", function (object)
 #' @export
 #' 
 #' @examples
-#' tagClustersGR( exampleCAGEexp, "Zf.high", TRUE, 0.1, 0.9 )
-#' tagClustersGR( exampleCAGEexp, 1
-#'              , returnInterquantileWidth = TRUE, qLow = 0.1, qUp = 0.9 )
+#' tagClustersGR( exampleCAGEexp, "Zf.high", 0.1, 0.9 )
+#' tagClustersGR( exampleCAGEexp, 1, qLow = 0.1, qUp = 0.9 )
+#' tagClustersGR( exampleCAGEexp )@metadata$colData
 #' 
 #' @export
 
 setGeneric( "tagClustersGR"
-          , function( object, sample = NULL
-                    , returnInterquantileWidth = FALSE, qLow = NULL, qUp = NULL) {
+          , function( object, sample = NULL, qLow = NULL, qUp = NULL) {
   if (is.null(sample)) {
     tc.list <- GRangesList( lapply( sampleLabels(object)
                                   , tagClustersGR
                                   , object = object
-                                  , returnInterquantileWidth = returnInterquantileWidth
                                   , qLow = qLow, qUp = qUp))
     names(tc.list) <- sampleLabels(object)
-    metadata(tc.list)$clusteringMethod <- CTSSclusteringMethod(object)
+    metadata(tc.list)$colData <- colData(object)
     return(tc.list)
   }
   validSamples(object, sample)
@@ -505,15 +439,12 @@ setGeneric( "tagClustersGR"
 #' @rdname tagClusters
 
 setMethod( "tagClustersGR", "CAGEexp"
-         , function (object, sample, returnInterquantileWidth, qLow, qUp) {
+         , function (object, sample, qLow, qUp) {
   tc <- metadata(object)$tagClusters[[sample]]
   if (is.null(tc))
-    stop( "No clusters found, run ", sQuote("clusterCTSS"), " first." , call. = FALSE)
+    stop( "No clusters found, run ", sQuote("distclu"), "or", sQuote("paraclu"), " first." , call. = FALSE)
   
-  if (returnInterquantileWidth) {
-    if (is.null(qLow) | is.null(qUp))
-      stop( "No quantiles specified!  Set the ", sQuote("qLow")
-          , " and ", sQuote("qUp"), "arguments.")
+  if (! is.null(qLow) & ! is.null(qUp)) {
     qLowName <- paste0("q_", qLow)
     qUpName  <- paste0("q_", qUp)
     if(! all( c(qLowName, qUpName) %in% colnames(mcols(tc))))
@@ -546,14 +477,7 @@ setMethod("filteredCTSSidx", "CAGEexp", function (object){
 #' @param sample Optional. Label of the CAGE dataset (experiment, sample) for
 #'        which to extract sample-specific information on consensus clusters.
 #' 
-#' @param returnInterquantileWidth Should the interquantile width of consensus
-#'        clusters in specified sample be returned.  Used only when `sample`
-#'        argument is specified, otherwise ignored.
-#' 
-#' @param qLow,qUp Position of which quantile should be used as a left (lower)
-#'        or right (upper) boundary when calculating interquantile width.  Used
-#'        only when `sample` argument is specified and
-#'        `returnInterquantileWidth = TRUE`, otherwise ignored.
+#' @param qLow,qUp Lower and upper quantiles to compute interquantile width.
 #' 
 #' @return `consensusClustersGR` returns a [`ConsensusClusters`] object, which
 #' wraps the [`GRanges`] class.  The `score` columns indicates the
@@ -563,9 +487,10 @@ setMethod("filteredCTSSidx", "CAGEexp", function (object){
 #' NOT specified, total CAGE signal across all CAGE datasets (samples) is
 #' returned in the `tpm` column.  When `sample` argument is specified, the `tpm`
 #' column contains CAGE signal of consensus clusters in that specific sample.
-#' When `returnInterquantileWidth = TRUE`, additional sample-specific information
-#' is returned, including position of the dominant TSS, and interquantile width
-#' of the consensus clusters in the specified sample.
+#' In addition, sample-specific information  is returned, including position of
+#' the dominant TSS, and (if applicable) interquantile width of the consensus
+#' clusters in the specified sample or otherwise, sample-agnostic information is
+#' returned.
 #' 
 #' @author Vanja Haberle
 #' @author Charles Plessy
@@ -577,15 +502,14 @@ setMethod("filteredCTSSidx", "CAGEexp", function (object){
 #' 
 #' @examples
 #' consensusClustersGR( exampleCAGEexp, sample = 2
-#'                    , returnInterquantileWidth = TRUE
 #'                    , qLow = 0.1, qUp = 0.9)
 #' 
+#' @importFrom GenomicRanges granges
 #' @export
 
 setGeneric( "consensusClustersGR"
           , function( object
-                    , sample = NULL
-                    , returnInterquantileWidth = FALSE
+                      , sample = NULL
                     , qLow = NULL, qUp = NULL) {
   validSamples(object, sample)
   standardGeneric("consensusClustersGR")})
@@ -593,8 +517,11 @@ setGeneric( "consensusClustersGR"
 #' @rdname consensusClusters
 
 setMethod( "consensusClustersGR", "CAGEexp"
-         , function (object, sample, returnInterquantileWidth, qLow, qUp) {
+         , function (object, sample, qLow, qUp) {
   cc <- rowRanges(consensusClustersSE(object))
+  ## Comment and edits added: 2022-OCT-06
+  ## If sample is NULL, provide sample-agnostic information.
+  ## When not NULL, provide sample-specific information
   if(!is.null(sample)) {
     if (!is.null(qLow))
       mcols(cc)[[paste0("q_", qLow)]] <-
@@ -602,18 +529,29 @@ setMethod( "consensusClustersGR", "CAGEexp"
     if (!is.null(qUp))
       mcols(cc)[[paste0("q_", qUp)]]  <-
         consensusClustersQuantile(object, sample, qUp)
-    if (returnInterquantileWidth == TRUE) {
-      if (is.null(qLow) | is.null(qUp))
-        stop( "Set ", sQuote("qLow"), " and ", sQuote("qUp")
-            , " to specify the quantile positions used to calculate width.")
-      mcols(cc)[["interquantile_width"]] = mcols(cc)[[paste0("q_", qUp )]] -
-                                           mcols(cc)[[paste0("q_", qLow)]] + 1
+    if (! is.null(qLow) & ! is.null(qUp)) {
+    mcols(cc)[["interquantile_width"]] = mcols(cc)[[paste0("q_", qUp )]] -
+                                         mcols(cc)[[paste0("q_", qLow)]] + 1
     }
     cc$tpm <- cc$score <- consensusClustersTpm(object)[,sample]
+    
   }
+  else{
+    ## sample agnostic information on IQW and dominantCTSS
+    ctss <- CTSScoordinatesGR(object)
+    score(ctss) <- CTSSnormalizedTpmDF(object) |> rowSums.RleDataFrame()
+    ctss <- ctss[ctss$filteredCTSSidx]
+    cc <- .ctss_summary_for_clusters(ctss, cc)
+    if (! is.null(qLow) & ! is.null(qUp)) {
+      qLowName <- paste0("q_", qLow)
+      qUpName  <- paste0("q_", qUp)
+      mcols(cc)[["interquantile_width"]] <- 
+        mcols(cc)[[qUpName]] - mcols(cc)[[qLowName]] + 1
+    }
+  }
+  names(cc) <- as.character(cc)
   cc
 })
-
 
 #' @name consensusClustersSE
 #' @rdname consensusClusters
@@ -767,6 +705,7 @@ setMethod("CTSScumulativesTagClusters", "CAGEexp", function (object, samples){
 })
 
 #' @rdname CTSScumulativesTagClusters
+#' @export
 
 setGeneric("CTSScumulativesCC", function(object, samples = NULL) {
   validSamples(object, samples)

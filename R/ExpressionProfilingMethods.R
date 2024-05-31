@@ -32,7 +32,7 @@
 #' normalized CAGE signal `>= tpmThreshold` in at least `nrPassThreshold` CAGE
 #' experiments are used for expression clustering.  However, CTSSs along the
 #' genome can be spatially clustered into tag clusters for each experiment
-#' separately using the [`clusterCTSS`] function, and then aggregated across
+#' separately using a CTSS clustering function, and then aggregated across
 #' experiments into consensus clusters using [`aggregateTagClusters`] function.
 #' Once the consensus clusters have been created, expression clustering at the
 #' level of these wider genomic regions (representing entire promoters rather
@@ -89,10 +89,10 @@ setMethod( "getExpressionProfiles", "CAGEexp"
 		stop("Provided CAGEexp object contains only one sample! At least two samples are required for expression profiling!")
   
   tpm.mx <- switch( what
-                  , CTSS              = CTSSnormalizedTpmDF(object)
+                  , CTSS              = CTSSnormalizedTpmDF(object) |> as.data.frame() |> as.matrix()
                   , consensusClusters = assay(consensusClustersSE(object), "normalized"))
   
-  l   <- getExpressionProfiles( object = DelayedArray(tpm.mx)
+  l   <- getExpressionProfiles( object = tpm.mx
                               , tpmThreshold = tpmThreshold, nrPassThreshold = nrPassThreshold
                               , method = method, xDim = xDim, yDim = yDim)
   cl  <- l[[1]]
@@ -113,13 +113,12 @@ setMethod( "getExpressionProfiles", "CAGEexp"
 #' @rdname getExpressionProfiles
 #' @importFrom som som
 #' @importFrom stats kmeans
-#' @import DelayedMatrixStats
 
-setMethod("getExpressionProfiles", "DelayedArray",
+setMethod("getExpressionProfiles", "matrix",
 function (object, what, tpmThreshold, nrPassThreshold, method, xDim, yDim) {
   method <- match.arg(method)
 
-  idx <- .filterCtss( object, threshold = tpmThreshold
+  idx <- flagLowExpCTSS( object, threshold = tpmThreshold
                     , nrPassThreshold = nrPassThreshold, thresholdIsTpm = TRUE)
 	
 	m <- t(scale(t(log(object + 1)), center=FALSE))

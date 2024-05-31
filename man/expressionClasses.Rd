@@ -35,7 +35,6 @@ Other CAGEr expression clustering functions:
 \code{\link{plotExpressionProfiles}()}
 
 Other CAGEr accessor methods: 
-\code{\link{CTSSclusteringMethod}()},
 \code{\link{CTSScoordinatesGR}()},
 \code{\link{CTSScumulativesTagClusters}()},
 \code{\link{CTSSnormalizedTpmDF}()},
@@ -44,8 +43,8 @@ Other CAGEr accessor methods:
 \code{\link{GeneExpSE}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{genomeName}()},
-\code{\link{inputFilesType}()},
 \code{\link{inputFiles}()},
+\code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},
 \code{\link{sampleLabels}()},
 \code{\link{seqNameTotalsSE}()},

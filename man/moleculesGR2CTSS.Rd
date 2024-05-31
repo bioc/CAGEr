@@ -24,8 +24,8 @@ CAGEr:::moleculesGR2CTSS(gr)
 Other loadFileIntoGPos: 
 \code{\link{bam2CTSS}()},
 \code{\link{import.CTSS}()},
-\code{\link{import.bam.ctss}()},
 \code{\link{import.bam}()},
+\code{\link{import.bam.ctss}()},
 \code{\link{import.bedCTSS}()},
 \code{\link{import.bedScore}()},
 \code{\link{import.bedmolecule}()},
