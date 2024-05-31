@@ -1,4 +1,10 @@
-# Upcoming changes in version 2.11.3
+# Upcoming changes in version 2.11.4
+
+NEW FEATURES
+
+-   Support the use of `TxDB` objects for annotating clusters.
+
+# Changes in version 2.11.3
 
 BACKWARDS-INCOMPATIBLE CHANGES
 
