@@ -3,6 +3,7 @@
 \name{annotateCTSS}
 \alias{annotateCTSS}
 \alias{annotateCTSS,CAGEexp,GRanges-method}
+\alias{annotateCTSS,CAGEexp,TxDb-method}
 \alias{annotateTagClusters}
 \alias{annotateTagClusters,CAGEexp,GRanges-method}
 \alias{annotateConsensusClusters}
@@ -12,6 +13,8 @@
 annotateCTSS(object, ranges, upstream = 500, downstream = 500)
 
 \S4method{annotateCTSS}{CAGEexp,GRanges}(object, ranges, upstream = 500, downstream = 500)
+
+\S4method{annotateCTSS}{CAGEexp,TxDb}(object, ranges)
 
 annotateTagClusters(object, ranges, upstream = 500, downstream = 500)
 
