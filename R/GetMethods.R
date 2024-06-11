@@ -442,7 +442,7 @@ setMethod( "tagClustersGR", "CAGEexp"
          , function (object, sample, qLow, qUp) {
   tc <- metadata(object)$tagClusters[[sample]]
   if (is.null(tc))
-    stop( "No clusters found, run ", sQuote("distclu"), "or", sQuote("paraclu"), " first." , call. = FALSE)
+    stop( "No clusters found, run ", sQuote("distclu"), " or ", sQuote("paraclu"), " first." , call. = FALSE)
   
   if (! is.null(qLow) & ! is.null(qUp)) {
     qLowName <- paste0("q_", qLow)
