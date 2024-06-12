@@ -1,5 +1,9 @@
 # Upcoming changes in version 2.11.4
 
+BACKWARDS-INCOMPATIBLE CHANGES
+
+- The `range` argument of the `annotateCTSS` function is renamed `annot`.
+
 NEW FEATURES
 
 -   Support the use of `TxDB` objects for annotating clusters.

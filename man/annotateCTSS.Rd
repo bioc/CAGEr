@@ -6,29 +6,35 @@
 \alias{annotateCTSS,CAGEexp,TxDb-method}
 \alias{annotateTagClusters}
 \alias{annotateTagClusters,CAGEexp,GRanges-method}
+\alias{annotateTagClusters,CAGEexp,TxDb-method}
 \alias{annotateConsensusClusters}
 \alias{annotateConsensusClusters,CAGEexp,GRanges-method}
+\alias{annotateConsensusClusters,CAGEexp,TxDb-method}
 \title{Annotate and compute summary statistics}
 \usage{
-annotateCTSS(object, ranges, upstream = 500, downstream = 500)
+annotateCTSS(object, annot, upstream = 500, downstream = 500)
 
-\S4method{annotateCTSS}{CAGEexp,GRanges}(object, ranges, upstream = 500, downstream = 500)
+\S4method{annotateCTSS}{CAGEexp,GRanges}(object, annot, upstream = 500, downstream = 500)
 
-\S4method{annotateCTSS}{CAGEexp,TxDb}(object, ranges)
+\S4method{annotateCTSS}{CAGEexp,TxDb}(object, annot)
 
-annotateTagClusters(object, ranges, upstream = 500, downstream = 500)
+annotateTagClusters(object, annot, upstream = 500, downstream = 500)
 
-\S4method{annotateTagClusters}{CAGEexp,GRanges}(object, ranges, upstream = 500, downstream = 500)
+\S4method{annotateTagClusters}{CAGEexp,GRanges}(object, annot, upstream = 500, downstream = 500)
 
-annotateConsensusClusters(object, ranges, upstream = 500, downstream = 500)
+\S4method{annotateTagClusters}{CAGEexp,TxDb}(object, annot)
 
-\S4method{annotateConsensusClusters}{CAGEexp,GRanges}(object, ranges, upstream = 500, downstream = 500)
+annotateConsensusClusters(object, annot, upstream = 500, downstream = 500)
+
+\S4method{annotateConsensusClusters}{CAGEexp,GRanges}(object, annot, upstream = 500, downstream = 500)
+
+\S4method{annotateConsensusClusters}{CAGEexp,TxDb}(object, annot)
 }
 \arguments{
 \item{object}{\code{CAGEexp} object.}
 
-\item{ranges}{A \code{\link{GRanges}} object, optionally containing \code{gene_name},
-\code{type} and \code{transcript_type} metadata.}
+\item{annot}{A \code{\link{GRanges}} or a \code{\link{TxDb}} object representing the genome
+annotation.  See details for the \code{GRanges} object.}
 
 \item{upstream}{Number of bases \emph{upstream} the start of the transcript models
 to be considered as part of the \emph{promoter region}.}
@@ -63,6 +69,12 @@ annotation statistics.
 
 \code{annotateConsensusClusters} annotates the \emph{consensus clusters}
 of a CAGEr object.
+}
+\details{
+If the annotation is a \code{\link{GRanges}}, gene names will be extracted from the
+\code{gene_name} metadata, the \code{transcript_type} metadata will be used to filter
+out entries that do not have promoters (such as immunogloblulin VDJ segments),
+and the \code{type} metadata is used to extract positions of introns and exons.
 }
 \examples{
 annotateCTSS(exampleCAGEexp, exampleZv9_annot)

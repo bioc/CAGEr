@@ -2,12 +2,9 @@
 % Please edit documentation in R/Annotations.R
 \name{ranges2annot}
 \alias{ranges2annot}
-\alias{txdb2annot}
 \title{Hierarchical annotation of genomic regions.}
 \usage{
 ranges2annot(ranges, annot, upstream = 500, downstream = 500)
-
-txdb2annot(ranges, annot)
 }
 \arguments{
 \item{ranges}{A \code{\link[GenomicRanges:GRanges-class]{GenomicRanges::GRanges}} object, for example extracted from

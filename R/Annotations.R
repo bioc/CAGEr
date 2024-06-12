@@ -408,15 +408,21 @@ msScope_annotation <- function(libs) {
 #' 
 #' @param object `CAGEexp` object.
 #'   
-#' @param ranges A [`GRanges`] object, optionally containing `gene_name`,
-#'   `type` and `transcript_type` metadata.
+#' @param annot A [`GRanges`] or a [`TxDb`] object representing the genome
+#'               annotation.  See details for the `GRanges` object.
 #' 
 #' @param upstream Number of bases _upstream_ the start of the transcript models
 #'        to be considered as part of the _promoter region_.
 #'        
 #' @param downstream Number of bases _downstream_ the start of the transcript
 #'        models to be considered as part of the _promoter region_.
-#'   
+#' 
+#' @details
+#' If the annotation is a [`GRanges`], gene names will be extracted from the
+#' `gene_name` metadata, the `transcript_type` metadata will be used to filter
+#' out entries that do not have promoters (such as immunogloblulin VDJ segments),
+#' and the `type` metadata is used to extract positions of introns and exons.
+#' 
 #' @return `annotateCTSS` returns the input object with the following
 #'   modifications:
 #' 
@@ -444,14 +450,14 @@ msScope_annotation <- function(libs) {
 #' 
 #' @export
 
-setGeneric("annotateCTSS", function(object, ranges, upstream=500, downstream=500)
+setGeneric("annotateCTSS", function(object, annot, upstream=500, downstream=500)
   standardGeneric("annotateCTSS"))
 
 #' @rdname annotateCTSS
 
-setMethod("annotateCTSS", c("CAGEexp", "GRanges"), function (object, ranges, upstream=500, downstream=500){
-  CTSScoordinatesGR(object)$genes      <- ranges2genes(CTSScoordinatesGR(object), ranges)
-  CTSScoordinatesGR(object)$annotation <- ranges2annot(CTSScoordinatesGR(object), ranges, upstream, downstream)
+setMethod("annotateCTSS", c("CAGEexp", "GRanges"), function (object, annot, upstream=500, downstream=500){
+  CTSScoordinatesGR(object)$genes      <- ranges2genes(CTSScoordinatesGR(object), annot)
+  CTSScoordinatesGR(object)$annotation <- ranges2annot(CTSScoordinatesGR(object), annot, upstream, downstream)
   
   annot <- sapply( CTSStagCountDF(object)
                  , function(X) tapply(X, CTSScoordinatesGR(object)$annotation, sum))
@@ -463,19 +469,31 @@ setMethod("annotateCTSS", c("CAGEexp", "GRanges"), function (object, ranges, ups
 
 #' @rdname annotateCTSS
 
-setMethod("annotateCTSS", c("CAGEexp", "TxDb"), function (object, ranges){
-  g <- genes(ranges)
-  g$gene_name <- g$gene_id
-  annotateCTSS(object, g)
-  CTSScoordinatesGR(object)$genes      <- ranges2genes(CTSScoordinatesGR(object), g)
-  CTSScoordinatesGR(object)$annotation <- txdb2annot(CTSScoordinatesGR(object), ranges)
-  
-  annot <- sapply( CTSStagCountDF(object)
-                   , function(X) tapply(X, CTSScoordinatesGR(object)$annotation, sum))
-  colData(object)[levels(CTSScoordinatesGR(object)$annotation)] <- DataFrame(t(annot))
-  validObject(object)
-  object
+setMethod("annotateCTSS", c("CAGEexp", "TxDb"), function (object, annot){
+  annotateCTSS(object, .txdb2annotranges(annot))
 })
+
+#' @name .txdb2annotranges
+#' 
+#' @noRd
+#' 
+#' @importFrom GenomicFeatures promoters exons transcripts
+#' 
+#' @examples
+#' txdb_file <- system.file("extdata", "hg19_knownGene_sample.sqlite",
+#'                          package="GenomicFeatures")
+#' txdb <- loadDb(txdb_file)
+#' .txdb2annotranges(txdb)
+
+.txdb2annotranges <- function(txdb) {
+  t <- transcripts(txdb, columns=c("gene_id"))
+  t$type <- "transcript"
+  e <- exons(txdb, columns=c("gene_id"))
+  e$type <- "exon"
+  annot <- c(t,e)
+  annot$gene_name <- annot$gene_id
+  annot
+}
 
 #' `annotateTagClusters` annotates the _tag clusters_ of a _CAGEr_ object.
 #'   
@@ -489,24 +507,29 @@ setMethod("annotateCTSS", c("CAGEexp", "TxDb"), function (object, ranges){
 #' @export
 #' @rdname annotateCTSS
 
-setGeneric("annotateTagClusters", function(object, ranges, upstream=500, downstream=500)
+setGeneric("annotateTagClusters", function(object, annot, upstream=500, downstream=500)
   standardGeneric("annotateTagClusters"))
 
 #' @rdname annotateCTSS
 
-setMethod("annotateTagClusters", c("CAGEexp", "GRanges"), function (object, ranges, upstream=500, downstream=500){
+setMethod("annotateTagClusters", c("CAGEexp", "GRanges"), function (object, annot, upstream=500, downstream=500){
   if(is.null(experiments(object)$tagCountMatrix))
     stop("Input does not contain CTSS expressiond data, see ", dQuote("getCTSS()"), ".")
   tagClustersGR(object) <- endoapply(tagClustersGR(object), function (gr) {
-    gr$annotation <- ranges2annot(gr, ranges, upstream, downstream) 
-    if(!is.null(ranges$gene_name))
-      gr$genes    <- ranges2genes(gr, ranges)
+    gr$annotation <- ranges2annot(gr, annot, upstream, downstream) 
+    if(!is.null(annot$gene_name))
+      gr$genes    <- ranges2genes(gr, annot)
     gr
     })
   validObject(object)
   object
 })
 
+#' @rdname annotateCTSS
+
+setMethod("annotateTagClusters", c("CAGEexp", "TxDb"), function (object, annot){
+  annotateTagClusters(object, .txdb2annotranges(annot))
+})
 
 #' @name annotateConsensusClusters
 #' 
@@ -524,21 +547,24 @@ setMethod("annotateTagClusters", c("CAGEexp", "GRanges"), function (object, rang
 #' 
 #' @export
 
-setGeneric("annotateConsensusClusters", function(object, ranges, upstream=500, downstream=500)
+setGeneric("annotateConsensusClusters", function(object, annot, upstream=500, downstream=500)
   standardGeneric("annotateConsensusClusters"))
 
 #' @rdname annotateCTSS
 
-setMethod("annotateConsensusClusters", c("CAGEexp", "GRanges"), function (object, ranges, upstream=500, downstream=500){
-  if(is.null(experiments(object)$tagCountMatrix))
-    stop("Input does not contain CTSS expressiond data, see ", dQuote("getCTSS()"), ".")
-  consensusClustersGR(object)$annotation <- ranges2annot(consensusClustersGR(object), ranges, upstream, downstream)
-  if(!is.null(ranges$gene_name))
-    consensusClustersGR(object)$genes    <- ranges2genes(consensusClustersGR(object), ranges)
+setMethod("annotateConsensusClusters", c("CAGEexp", "GRanges"), function (object, annot, upstream=500, downstream=500){
+  consensusClustersGR(object)$annotation <- ranges2annot(consensusClustersGR(object), annot, upstream, downstream)
+  if(!is.null(annot$gene_name))
+    consensusClustersGR(object)$genes    <- ranges2genes(consensusClustersGR(object), annot)
   validObject(object)
   object
 })
 
+#' @rdname annotateCTSS
+
+setMethod("annotateConsensusClusters", c("CAGEexp", "TxDb"), function (object, annot){
+  annotateConsensusClusters(object, .txdb2annotranges(annot))
+})
 
 #' Hierarchical annotation of genomic regions.
 #' 
@@ -633,34 +659,6 @@ ranges2annot <- function(ranges, annot, upstream=500, downstream=500) {
     })
   }
 
-  annot <- factor(annot, levels = classes)
-  Rle(annot)
-}
-
-#' @name txdb2annot
-#' 
-#' @rdname ranges2annot
-#' 
-#' @importFrom GenomicFeatures promoters exons transcripts
-
-txdb2annot <- function(ranges, annot) {
-  findOverlapsBool <- function(A, B) {
-    overlap <- findOverlaps(A, B)
-    overlap <- as(overlap, "List")
-    any(overlap)
-  }
-  
-  classes <- c("promoter", "exon", "intron", "unknown")
-  p <- findOverlapsBool(ranges, trim(suppressWarnings(promoters(annot, 500, 500))))
-  e <- findOverlapsBool(ranges, exons(annot))
-  t <- findOverlapsBool(ranges, transcripts(annot))
-  annot <- sapply( 1:length(ranges), function(i) {
-    if      (p[i]) {classes[1]}
-    else if (e[i]) {classes[2]}
-    else if (t[i]) {classes[3]}
-    else           {classes[4]}
-  })
-  
   annot <- factor(annot, levels = classes)
   Rle(annot)
 }
