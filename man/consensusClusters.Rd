@@ -60,6 +60,7 @@ Other CAGEr accessor methods:
 \code{\link{GeneExpDESeq2}()},
 \code{\link{GeneExpSE}()},
 \code{\link{expressionClasses}()},
+\code{\link{filteredCTSSidx}()},
 \code{\link{genomeName}()},
 \code{\link{inputFiles}()},
 \code{\link{inputFilesType}()},

@@ -41,6 +41,7 @@ Other CAGEr accessor methods:
 \code{\link{GeneExpSE}()},
 \code{\link{consensusClustersGR}()},
 \code{\link{expressionClasses}()},
+\code{\link{filteredCTSSidx}()},
 \code{\link{genomeName}()},
 \code{\link{inputFilesType}()},
 \code{\link{librarySizes}()},

@@ -182,6 +182,8 @@ setMethod("validSamples", "CAGEr", function (object, x){
 #' 
 #' @export
 #' 
+#' @family CAGEr filter functions
+#' 
 #' @examples
 #' flagLowExpCTSS(exampleCAGEexp, threshold = 100, nrPassThreshold = 2)
 

@@ -87,3 +87,9 @@ reproduced.
 \examples{
 flagLowExpCTSS(exampleCAGEexp, threshold = 100, nrPassThreshold = 2)
 }
+\seealso{
+Other CAGEr filter functions: 
+\code{\link{filteredCTSSidx}()},
+\code{\link{flagByUpstreamSequences}()}
+}
+\concept{CAGEr filter functions}

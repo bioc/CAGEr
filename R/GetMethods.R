@@ -454,13 +454,32 @@ setMethod( "tagClustersGR", "CAGEexp"
   .TagClusters(tc)
 })
 
-#' @name filteredCTSSidx
-#' @noRd
+#' The `filteredCTSSidx()` function is in _CAGEr_ functions to retrieve the
+#' result of the `flagLowExpCTSS()` function in a safe way.
+#' 
+#' @returns Returns the value of `filteredCTSSidx` in the row ranges of the
+#' tag count matrix experiment of the `CAGEexp` object, or `Rle(TRUE)` if it
+#' was `NULL`
+#' 
+#' @param object A [`CAGEexp`] object
+#' 
+#' @export
+#' 
+#' @examples
+#' 
+#' filteredCTSSidx(exampleCAGEexp)
+#' 
+#' @family CAGEr filter functions
+#' @family CAGEr accessor methods
 
 setGeneric("filteredCTSSidx", function(object) standardGeneric("filteredCTSSidx"))
 
+#' @rdname filteredCTSSidx
+
 setMethod("filteredCTSSidx", "CAGEexp", function (object){
-  rowData(CTSStagCountSE(object))$filteredCTSSidx
+  res <- rowData(CTSStagCountSE(object))$filteredCTSSidx
+  if (is.null(res)) return(Rle(TRUE))
+  res
 })
 
 

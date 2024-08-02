@@ -1,4 +1,4 @@
-# Upcoming changes in version 2.11.4
+# Changes in version 2.11.4
 
 BACKWARDS-INCOMPATIBLE CHANGES
 
@@ -7,6 +7,11 @@ BACKWARDS-INCOMPATIBLE CHANGES
 NEW FEATURES
 
 -   Support the use of `TxDB` objects for annotating clusters.
+
+BUG FIXES
+
+-   Fix issue #120 introduced in 2.11.3, where clustering functions would
+    fail if `filterLowExpCTSS` was not run before.
 
 # Changes in version 2.11.3
 

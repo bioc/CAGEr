@@ -40,6 +40,11 @@ If the provided \code{object} represents \emph{tag clusters} or \emph{consensus 
 the search will be done upstream its \emph{dominant peak}.  Convert the object
 to the \code{GRanges} class if this is not the behaviour you want.
 }
+\seealso{
+Other CAGEr filter functions: 
+\code{\link{filteredCTSSidx}()},
+\code{\link{flagLowExpCTSS}()}
+}
 \author{
 Charles Plessy
 }
