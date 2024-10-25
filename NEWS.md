@@ -1,22 +1,8 @@
-# Changes in version 2.11.4
+# Changes in version 2.12.0 (30/10/2024)
 
 BACKWARDS-INCOMPATIBLE CHANGES
 
-- The `range` argument of the `annotateCTSS` function is renamed `annot`.
-
-NEW FEATURES
-
--   Support the use of `TxDB` objects for annotating clusters.
-
-BUG FIXES
-
--   Fix issue #120 introduced in 2.11.3, where clustering functions would
-    fail if `filterLowExpCTSS` was not run before.
-
-# Changes in version 2.11.3
-
-BACKWARDS-INCOMPATIBLE CHANGES
-
+-   The `range` argument of the `annotateCTSS` function is renamed `annot`.
 -   The `removeSingletons` option of clustering methods is removed and the
     default value of `keepSingletonsAbove` is set to `0`, which keeps the
     standard behavior.
@@ -25,22 +11,9 @@ BACKWARDS-INCOMPATIBLE CHANGES
 -   The `clusterCTSS` function is replaced by the new `paraclu` and `distclu`
     function.  CTSS filtering is done beforehand with the new `filterLowExpCTSS`
     function.
-
-BUG FIXES
-
--   CTSS filtering now works correctly with `threshold = 0, thresholdIsTpm  = TRUE`.
-
-OTHER CHANGES
-
--   Accelerated the computation of cumulative sums ~10×.
-
-# Changes in version 2.11.2
-
-BACKWARDS-INCOMPATIBLE CHANGES
-
--   Remove `CTSSclusteringMethod()` function and stop recording clustering
+-   Removed `CTSSclusteringMethod()` function and stop recording clustering
     method name.
--   Remove `returnInterquantileWidth` argument of functions and always return
+-   Removed `returnInterquantileWidth` argument of functions and always return
     that width when quantile information is provided.  Closes #114
 -   The `CTSStagCountDA` function is removed.
 -   The _dominant peak_ in `TagClusters` objects is now a `GRanges` object like
@@ -50,12 +23,9 @@ BACKWARDS-INCOMPATIBLE CHANGES
 -   The `exportToTrack` function now exports scores of _tag clusters_ and
     _consensus clusters_ instead of setting them to zero.
 
-BUG FIXES
-
--   The `importPublicData` function was repaired for FANTOM samples.
-
 NEW FEATURES
 
+-   Support the use of `TxDB` objects for annotating clusters.
 -   The `plotReverseCumulatives()` function now uses `ggplot2`.  Its  `main`,
     `legend`, `xlab`, `ylab`, `xlim` and `ylim` arguments were removed as this
     can be controlled via `ggplot2` functions.
@@ -64,20 +34,23 @@ NEW FEATURES
     objects.  You can use them to test parameters before running the whole
     `CAGEexp` object through `clusterCTSS`.
 
-OTHER CHANGES
-
--   Singleton filtering is now done by the `paraclu` and `distclu` functions
-    themeselves; `.ctss_summary_for_clusters` does not change the input clusters
-    except for adding information.
-
-# Changes in version 2.11.1
-
 BUG FIXES
 
+-   CTSS filtering now works correctly with `threshold = 0, thresholdIsTpm  = TRUE`.
+-   The `importPublicData` function was repaired for FANTOM samples.
 -   Remove broken and obsolete `customClusters` method of `clusterCTSS`.  Use
     `CustomConsensusClusters()` instead.  Fixes #113.
 -   Ensure consensus clusters can be exported as tracks with interquantile
     width information.  Fixes #108, #70.
+
+OTHER CHANGES
+
+-   Accelerated the computation of cumulative sums ~10×.
+-   Singleton filtering is now done by the `paraclu` and `distclu` functions
+    themeselves; `.ctss_summary_for_clusters` does not change the input clusters
+    except for adding information.
+
+# No changes in version 2.10.0 (01/05/2024)
 
 # Changes in version 2.8.0 (25/10/2023)
 
